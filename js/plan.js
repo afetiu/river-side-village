@@ -81,9 +81,9 @@ function door(d) {
 export function buildPlan(floor, opts = {}) {
   const { w: BW, h: BH, wallExt: wall, wallR } = BUILDING;
   const bare = !!opts.bare;              // vetëm gjeometria, për mbivendosje
-  const pad = bare ? 0 : 175;
-  const topPad = bare ? 0 : 110;
-  const botPad = bare ? 0 : 360;
+  const pad = bare ? 0 : 150;
+  const topPad = bare ? 0 : 115;
+  const botPad = bare ? 0 : 230;
 
   const svg = el('svg', {
     viewBox: bare ? `0 0 ${BW} ${BH}` : `${-pad} ${-pad - topPad} ${BW + pad * 2} ${BH + pad * 2 + botPad}`,
@@ -196,7 +196,7 @@ export function buildPlan(floor, opts = {}) {
     : chain(d.a, -118, d.b, -118, d.t, false, 1));
   svg.appendChild(dim);
 
-  const capY = BH + (floor.outside?.length ? 250 : 130);
+  const capY = BH + (floor.outside?.length ? 210 : 120);
   const cap = el('g', { class: 'plan-cap' });
   cap.appendChild(el('line', { x1: 0, y1: capY - 52, x2: BW, y2: capY - 52, class: 'cap-rule' }));
   const t1 = el('text', { x: 0, y: capY, class: 'cap-name' }); t1.textContent = floor.name.toUpperCase();

@@ -6,56 +6,13 @@ const $$ = s => [...document.querySelectorAll(s)];
 const fmt = n => n.toFixed(2).replace('.', ',');
 
 const stage = $('#plan-stage');
-const panel = { empty: $('#rp-empty'), body: $('#rp-body') };
+let current = null;
 
-let current = FLOORS[0];
+/* ---------- përzgjedhja e dhomës ---------- */
 
-/* ---------- paneli i dhomës ---------- */
-
-function showRoom(room, floor) {
-  panel.empty.hidden = true;
-  panel.body.hidden = false;
-  $('#rp-kind').textContent = KIND[room.kind].label;
-  $('#rp-name').textContent = room.name;
-  $('#rp-area').innerHTML = room.area
-    ? `${fmt(room.area)} <span>m²</span>`
-    : '<span class="rp-na">Pjesë e qarkullimit</span>';
-  $('#rp-finish').textContent = room.finish || '—';
-  $('#rp-floor').textContent = `${floor.name} (${floor.level})`;
-  $('#rp-per').textContent = room.perimeter ? `${(room.perimeter / 100).toFixed(2).replace('.', ',')} m` : '—';
-
-  const note = $('#rp-note');
-  if (room.inferred) {
-    note.hidden = false;
-    note.textContent = 'Kjo hapësirë është nën shkallë dhe shfaqet me dush në projekt, por nuk është e etiketuar në tabelën e sipërfaqeve. Sipërfaqja është llogaritur nga kuotat.';
-  } else note.hidden = true;
-
-  $$('.plan-svg .room').forEach(r => r.classList.toggle('is-sel', r.dataset.room === room.id));
-  $$('.rp-rooms li').forEach(li => li.classList.toggle('is-sel', li.dataset.room === room.id));
-}
-
-function clearRoom() {
-  panel.empty.hidden = false;
-  panel.body.hidden = true;
-  $$('.plan-svg .room').forEach(r => r.classList.remove('is-sel'));
-  $$('.rp-rooms li').forEach(li => li.classList.remove('is-sel'));
-}
-
-/* ---------- lista e dhomave ---------- */
-
-function renderRoomList(floor) {
-  const ul = $('#rp-rooms');
-  ul.innerHTML = '';
-  floor.rooms.filter(r => r.area).forEach(r => {
-    const li = document.createElement('li');
-    li.dataset.room = r.id;
-    li.innerHTML = `<span class="rl-sw" style="background:${KIND[r.kind].fill}"></span>
-      <span class="rl-name">${r.name}</span><span class="rl-area">${fmt(r.area)} m²</span>`;
-    li.addEventListener('click', () => showRoom(r, floor));
-    li.addEventListener('mouseenter', () => highlight(r.id, true));
-    li.addEventListener('mouseleave', () => highlight(r.id, false));
-    ul.appendChild(li);
-  });
+function select(id) {
+  $$('.plan-svg .room').forEach(r => r.classList.toggle('is-sel', r.dataset.room === id));
+  $$('.rooms-inline li').forEach(li => li.classList.toggle('is-sel', li.dataset.room === id));
 }
 
 function highlight(id, on) {
@@ -63,62 +20,58 @@ function highlight(id, on) {
   if (g) g.classList.toggle('is-hot', on);
 }
 
-/* ---------- legjenda ---------- */
+/* ---------- lista e dhomave nën plan ---------- */
 
-function renderLegend(floor) {
-  // grupohet sipas etiketës, që "Hapësirë ditore" të mos dalë dy herë
-  const seen = new Map();
-  floor.rooms.forEach(r => {
-    if (!r.area) return;
-    const v = KIND[r.kind];
-    if (!seen.has(v.label)) seen.set(v.label, v.fill);
+function renderRoomList(floor) {
+  const ul = $('#rp-rooms');
+  ul.innerHTML = '';
+  floor.rooms.filter(r => r.area).forEach(r => {
+    const li = document.createElement('li');
+    li.dataset.room = r.id;
+    li.title = `${r.name} · ${r.finish} · perimetri ${r.perimeter ? (r.perimeter / 100).toFixed(2).replace('.', ',') + ' m' : '—'}`;
+    li.innerHTML = `<span class="rl-sw" style="background:${KIND[r.kind].fill}"></span>` +
+      `<span>${r.name}</span><span class="rl-area">${fmt(r.area)} m²</span>`;
+    li.addEventListener('click', () => select(r.id));
+    li.addEventListener('mouseenter', () => highlight(r.id, true));
+    li.addEventListener('mouseleave', () => highlight(r.id, false));
+    ul.appendChild(li);
   });
-  $('#legend').innerHTML = [...seen].map(([label, fill]) =>
-    `<li><i style="background:${fill}"></i>${label}</li>`).join('');
 }
 
 /* ---------- ndërrimi i katit ---------- */
 
-function setFloor(id, { scroll = false } = {}) {
+function setFloor(id) {
   const floor = FLOORS.find(f => f.id === id);
-  if (!floor || floor === current && stage.firstChild) return;
+  if (!floor || (floor === current && stage.firstChild)) return;
   current = floor;
 
   $$('.floor-tabs button').forEach(b =>
     b.setAttribute('aria-selected', String(b.dataset.tab === id)));
 
-  const fig = buildPlan(floor);
-  fig.classList.add('is-entering');
-  stage.replaceChildren(fig);
-  requestAnimationFrame(() => fig.classList.remove('is-entering'));
+  const svg = buildPlan(floor);
+  svg.classList.add('is-entering');
+  stage.replaceChildren(svg);
+  requestAnimationFrame(() => svg.classList.remove('is-entering'));
 
-  fig.querySelectorAll('.room').forEach(g => {
+  svg.querySelectorAll('.room').forEach(g => {
     const room = floor.rooms.find(r => r.id === g.dataset.room);
-    g.addEventListener('click', () => showRoom(room, floor));
+    g.addEventListener('click', () => select(room.id));
     g.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showRoom(room, floor); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(room.id); }
     });
   });
 
-  $('#floor-blurb').textContent = floor.blurb;
   renderRoomList(floor);
-  renderLegend(floor);
-  clearRoom();
-
-  if (scroll) $('#planimetria').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-/* ---------- inicializimi ---------- */
-
 setFloor('perdhesa');
-
 $$('.floor-tabs button').forEach(b =>
   b.addEventListener('click', () => setFloor(b.dataset.tab)));
 
 /* shigjetat majtas/djathtas mes kateve */
 document.addEventListener('keydown', e => {
   if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
-  if (!$('#planimetria').contains(document.activeElement) && document.activeElement !== document.body) return;
+  if ($('#lb').hidden === false) return;
   const i = FLOORS.indexOf(current);
   const n = e.key === 'ArrowRight' ? i + 1 : i - 1;
   if (FLOORS[n]) setFloor(FLOORS[n].id);
@@ -129,53 +82,59 @@ document.addEventListener('keydown', e => {
 const SITE = [42.356054, 20.832722];
 
 (function initMap() {
-  const mount = document.getElementById('map-mount');
+  const mount = $('#map-mount');
   if (!mount || typeof L === 'undefined') return;
 
   const map = L.map(mount, {
-    center: SITE, zoom: 16, scrollWheelZoom: false, attributionControl: true
+    center: SITE, zoom: 16, scrollWheelZoom: false,
+    zoomControl: true, attributionControl: true
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
   }).addTo(map);
 
-  const icon = L.divIcon({
-    className: 'site-pin',
-    html: '<span class="pin-ring"></span><span class="pin-dot"></span>',
-    iconSize: [28, 28], iconAnchor: [14, 14]
-  });
+  L.marker(SITE, {
+    icon: L.divIcon({
+      className: 'site-pin',
+      html: '<span class="pin-ring"></span><span class="pin-dot"></span>',
+      iconSize: [28, 28], iconAnchor: [14, 14]
+    }),
+    title: 'River Side — Village, Nr. 7'
+  }).addTo(map).bindPopup('<strong>River Side — Village</strong><br>Modeli 2 · Nr. 7');
 
-  L.marker(SITE, { icon, title: 'River Side — Village' })
-    .addTo(map)
-    .bindPopup('<strong>River Side — Village</strong><br>Shtëpi në varg, Modeli 2');
-
-  // rrota e mausit aktivizohet vetëm pas klikimit, që faqja të skrollohet lirshëm
   map.on('click', () => map.scrollWheelZoom.enable());
   map.on('mouseout', () => map.scrollWheelZoom.disable());
+
+  // harta rifreskon përmasat kur ndryshon dritarja
+  new ResizeObserver(() => map.invalidateSize()).observe(mount);
 })();
 
-const copyBtn = $('#copy-coords');
-copyBtn?.addEventListener('click', async () => {
-  const txt = SITE.join(', ');
-  try {
-    await navigator.clipboard.writeText(txt);
-    copyBtn.textContent = 'U kopjua ✓';
-  } catch {
-    copyBtn.textContent = txt;
-  }
-  setTimeout(() => { copyBtn.textContent = 'Kopjo koordinatat'; }, 2200);
+/* koordinatat me një klikim */
+$('#coords')?.addEventListener('click', async e => {
+  const t = e.currentTarget, txt = SITE.join(', ');
+  try { await navigator.clipboard.writeText(txt); t.textContent = 'U kopjua ✓'; }
+  catch { /* pa clipboard — lëri koordinatat siç janë */ }
+  setTimeout(() => { t.textContent = txt; }, 1800);
 });
 
-/* nav e ngjeshur pas skrollimit */
-const nav = $('#nav');
-const io = new IntersectionObserver(([e]) => nav.classList.toggle('is-solid', !e.isIntersecting),
-  { rootMargin: '-90px 0px 0px 0px' });
-io.observe($('.hero-inner'));
+/* ---------- lightbox i pamjeve ---------- */
 
-/* zbulim progresiv i seksioneve */
-const reveal = new IntersectionObserver(entries => {
-  entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); reveal.unobserve(en.target); } });
-}, { threshold: 0.12 });
-$$('.story, .plans, .fac, .proj, .map, .contact, .specs').forEach(s => { s.classList.add('rv'); reveal.observe(s); });
+const lb = $('#lb'), lbImg = $('#lb-img'), lbCap = $('#lb-cap');
+
+function openLb(src, cap, alt) {
+  lbImg.src = src; lbImg.alt = alt || cap || '';
+  lbCap.textContent = cap || '';
+  lb.hidden = false;
+  $('#lb-close').focus();
+}
+function closeLb() { lb.hidden = true; lbImg.src = ''; }
+
+$$('#shots button').forEach(b =>
+  b.addEventListener('click', () =>
+    openLb(b.dataset.img, b.dataset.cap, b.querySelector('img')?.alt)));
+
+$('#lb-close').addEventListener('click', closeLb);
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
