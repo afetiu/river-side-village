@@ -23,8 +23,24 @@ sipas projektit), `perimeter` (cm), `finish` dhe kutinë `x/y/w/h` në centimetr
 Origjina është këndi i sipërm i majtë i gabaritit 600 × 1180 cm; ana e poshtme
 e planit është fasada ballore.
 
-**Kontakti** — në `index.html`, seksioni `#kontakt`. Zëvendëso numrin te
-`href="tel:..."` dhe adresën te `href="mailto:..."`.
+**Kontakti** — në `index.html`, seksioni `#kontakt`. Numrat janë te
+`href="tel:..."` (pa hapësira) dhe teksti i butonit veçmas.
+
+## Google Analytics
+
+Në `<head>` të `index.html` ka një bllok me `window.GA_ID = ''`. Vendos aty
+ID-në e matjes GA4 dhe analytics-i aktivizohet vetë:
+
+```js
+window.GA_ID = 'G-XXXXXXXXXX';
+```
+
+ID-ja merret te [analytics.google.com](https://analytics.google.com) →
+**Admin → Data streams → Web** → krijo një stream për domenin → kopjo
+*Measurement ID* (fillon me `G-`).
+
+Nëse fusha lihet bosh, skripti i Google-it nuk ngarkohet fare — asnjë kërkesë
+e jashtme, asnjë cookie.
 
 ## Zhvillim lokal
 

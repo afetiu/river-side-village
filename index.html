@@ -13,8 +13,28 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+
+<!-- ── Google Analytics 4 ───────────────────────────────────────────────
+     Vendos ID-në e matjes më poshtë (formati G-XXXXXXXXXX), nga
+     analytics.google.com → Admin → Data streams → Web.
+     Lëre bosh dhe analytics-i thjesht nuk ngarkohet.               -->
+<script>
+  window.GA_ID = '';
+
+  (function (id) {
+    if (!/^G-[A-Z0-9]+$/i.test(id || '')) return;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', id);
+  })(window.GA_ID);
+</script>
 </head>
 <body>
 
@@ -249,12 +269,12 @@
     <p class="sec-num">05</p>
     <h2>Interesuar për këtë shtëpi?</h2>
     <p class="contact-lede">
-      Çmimi caktohet me marrëveshje. Shkruani ose telefononi për detaje,
-      dokumentacion dhe një vizitë në objekt.
+      Çmimi caktohet me marrëveshje. Telefononi për detaje, dokumentacion
+      dhe një vizitë në objekt.
     </p>
     <div class="contact-actions">
-      <a class="btn btn-lg" href="tel:+38300000000" data-fill="telefoni">+383 00 000 000</a>
-      <a class="btn btn-ghost btn-lg" href="mailto:email@example.com?subject=Interesim%20-%20River%20Side%20Village%2C%20Modeli%202" data-fill="emaili">Dërgo email</a>
+      <a class="btn btn-lg" href="tel:+38344202245">+383 44 202 245</a>
+      <a class="btn btn-lg" href="tel:+38349462482">+383 49 462 482</a>
     </div>
     <p class="contact-fine">Shtëpia është në ndërtim — vizitat organizohen sipas fazës së punimeve.</p>
   </div>
