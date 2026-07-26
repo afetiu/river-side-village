@@ -210,33 +210,51 @@ figcaption{font-family:var(--f-mono);font-size:.71rem;color:var(--ink-3);margin-
 
 .plan-col{position:sticky;top:92px}
 .plan-stage{background:var(--paper);border-radius:4px;
-  padding:clamp(.9rem,1.8vw,1.6rem);display:flex;justify-content:center}
-
-/* vizatimi origjinal + zonat e klikueshme mbi te */
-/* figura merr saktësisht përmasat e vizatimit — pa breza bosh anash */
-.plan-figure{position:relative;margin:0;display:inline-block;line-height:0;
-  max-width:100%;
+  padding:clamp(1rem,2vw,1.8rem);display:flex;justify-content:center}
+.plan-svg{display:block;width:100%;max-height:86vh;height:auto;color:var(--ink);
   transition:opacity .5s var(--ease),transform .5s var(--ease)}
-.plan-figure.is-entering{opacity:0;transform:translateY(14px) scale(.99)}
-.plan-img{display:block;width:auto;height:auto;max-width:100%;max-height:88vh;
-  mix-blend-mode:multiply;filter:contrast(1.06)}
+.plan-svg.is-entering{opacity:0;transform:translateY(14px) scale(.99)}
 
-.hotspots{position:absolute;inset:0}
-.hot{position:absolute;border:0;padding:0;margin:0;cursor:pointer;border-radius:3px;
-  background:transparent;outline:0;
-  transition:background .25s var(--ease),box-shadow .25s var(--ease)}
-.hot:hover,.hot.is-hot{background:color-mix(in srgb,var(--brick) 20%,transparent)}
-.hot.is-sel{background:color-mix(in srgb,var(--brick) 26%,transparent);
-  box-shadow:inset 0 0 0 2px var(--brick)}
-.hot:focus-visible{box-shadow:inset 0 0 0 3px var(--brick)}
+/* elementet e planit */
+.slab{fill:var(--white)}
+.outside-rect{fill:none;stroke:var(--line);stroke-width:3;stroke-dasharray:14 10}
+.outside-label{font-family:var(--f-mono);font-size:26px;fill:var(--ink-3);text-anchor:middle;letter-spacing:.05em}
+.room{cursor:pointer}
+.room-fill{transition:fill .35s var(--ease)}
+.room-hit{fill:transparent;stroke:transparent;stroke-width:0;cursor:pointer;transition:fill .3s,stroke .3s}
+.room:hover .room-hit,.room.is-hot .room-hit{fill:rgba(179,80,42,.15)}
+.room.is-sel .room-hit{fill:rgba(179,80,42,.22);stroke:var(--brick);stroke-width:7}
+.room:focus-visible{outline:none}
+.room:focus-visible .room-hit{stroke:var(--brick);stroke-width:7}
 
-.hot-tag{position:absolute;left:50%;top:50%;translate:-50% -50%;
-  background:var(--ink);color:var(--paper);border-radius:3px;
-  padding:.34em .6em;white-space:nowrap;line-height:1.25;
-  font-family:var(--f-mono);font-size:.66rem;letter-spacing:.01em;
-  opacity:0;pointer-events:none;transition:opacity .2s var(--ease)}
-.hot:hover .hot-tag,.hot.is-hot .hot-tag,.hot.is-sel .hot-tag,
-.hot:focus-visible .hot-tag{opacity:1}
+.wall-ext{fill:none;stroke:var(--ink)}
+.wall-int{fill:var(--ink)}
+.wall-party{fill:var(--ink);opacity:.88}
+.win-cut,.rail-cut{fill:var(--white)}
+.win-glass{stroke:var(--ink);stroke-width:5}
+.rail-line{stroke:var(--ink-3);stroke-width:4}
+.door-arc{fill:none;stroke:var(--ink-3);stroke-width:3.5}
+.door-leaf-line{stroke:var(--ink);stroke-width:6}
+.door-leaf{fill:var(--white)}
+.f-line{fill:none;stroke:var(--ink-3);stroke-width:3.2;opacity:.45}
+.stair-bg{fill:var(--paper-2)}
+.stair-tread{stroke:var(--ink-3);stroke-width:3}
+.stair-arrow{stroke:var(--brick);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+.room-name,.room-area{paint-order:stroke fill;stroke:var(--white);stroke-width:7px;
+  stroke-linejoin:round;text-anchor:middle;pointer-events:none}
+.room-name{font-family:var(--f-disp);font-weight:700;font-stretch:105%;fill:var(--ink);letter-spacing:-.015em}
+.room-area{font-family:var(--f-mono);fill:var(--ink-3)}
+
+.dim-line,.dim-tick{stroke:var(--ink-3);stroke-width:2.5}
+.dim-text{font-family:var(--f-mono);font-size:28px;fill:var(--ink-3);text-anchor:middle}
+.dim-line-in{stroke:var(--brick);stroke-width:2.5;stroke-dasharray:10 7;opacity:.85}
+.dim-text-in{font-family:var(--f-mono);font-size:24px;fill:var(--brick);text-anchor:middle;
+  paint-order:stroke fill;stroke:var(--white);stroke-width:7px;stroke-linejoin:round}
+.cap-name{font-family:var(--f-disp);font-weight:900;font-stretch:112%;font-size:44px;
+  letter-spacing:-.045em;fill:var(--ink);text-transform:uppercase}
+.cap-area{font-family:var(--f-mono);font-size:26px;fill:var(--ink-3);text-anchor:end}
+.cap-rule{stroke:var(--line);stroke-width:3}
 
 .legend{list-style:none;display:flex;flex-wrap:wrap;gap:.55rem 1.15rem;margin:.4rem 0 0;padding:1rem 0 0;
   border-top:1px solid var(--paper-3)}

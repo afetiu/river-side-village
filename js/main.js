@@ -30,14 +30,14 @@ function showRoom(room, floor) {
     note.textContent = 'Kjo hapësirë është nën shkallë dhe shfaqet me dush në projekt, por nuk është e etiketuar në tabelën e sipërfaqeve. Sipërfaqja është llogaritur nga kuotat.';
   } else note.hidden = true;
 
-  $$('.hot').forEach(r => r.classList.toggle('is-sel', r.dataset.room === room.id));
+  $$('.plan-svg .room').forEach(r => r.classList.toggle('is-sel', r.dataset.room === room.id));
   $$('.rp-rooms li').forEach(li => li.classList.toggle('is-sel', li.dataset.room === room.id));
 }
 
 function clearRoom() {
   panel.empty.hidden = false;
   panel.body.hidden = true;
-  $$('.hot').forEach(r => r.classList.remove('is-sel'));
+  $$('.plan-svg .room').forEach(r => r.classList.remove('is-sel'));
   $$('.rp-rooms li').forEach(li => li.classList.remove('is-sel'));
 }
 
@@ -59,7 +59,7 @@ function renderRoomList(floor) {
 }
 
 function highlight(id, on) {
-  const g = stage.querySelector(`.hot[data-room="${id}"]`);
+  const g = stage.querySelector(`.room[data-room="${id}"]`);
   if (g) g.classList.toggle('is-hot', on);
 }
 
@@ -92,11 +92,12 @@ function setFloor(id, { scroll = false } = {}) {
   stage.replaceChildren(fig);
   requestAnimationFrame(() => fig.classList.remove('is-entering'));
 
-  fig.querySelectorAll('.hot').forEach(g => {
+  fig.querySelectorAll('.room').forEach(g => {
     const room = floor.rooms.find(r => r.id === g.dataset.room);
     g.addEventListener('click', () => showRoom(room, floor));
-    g.addEventListener('mouseenter', () => highlight(room.id, true));
-    g.addEventListener('mouseleave', () => highlight(room.id, false));
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showRoom(room, floor); }
+    });
   });
 
   $('#floor-blurb').textContent = floor.blurb;
