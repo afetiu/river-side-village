@@ -99,6 +99,7 @@ function setFloor(id, { scroll = false } = {}) {
 
   $('#floor-blurb').textContent = floor.blurb;
   $('#orig-link').href = `assets/img/orig-${floor.id}.jpg`;
+  $('#orig-img').src = `assets/img/orig-${floor.id}.jpg`;
   renderRoomList(floor);
   renderLegend(floor);
   clearRoom();
@@ -132,6 +133,59 @@ document.addEventListener('keydown', e => {
   if (FLOORS[n]) setFloor(FLOORS[n].id);
 });
 
+/* shfaq / fsheh vizatimin origjinal krahas planit të vizatuar */
+const so = $('#show-orig');
+so.addEventListener('click', () => {
+  const on = so.getAttribute('aria-pressed') !== 'true';
+  so.setAttribute('aria-pressed', String(on));
+  $('#plan-orig').hidden = !on;
+  $('.plan-stage').classList.toggle('is-split', on);
+});
+
+/* ---------- harta ---------- */
+
+const SITE = [42.356054, 20.832722];
+
+(function initMap() {
+  const mount = document.getElementById('map-mount');
+  if (!mount || typeof L === 'undefined') return;
+
+  const map = L.map(mount, {
+    center: SITE, zoom: 16, scrollWheelZoom: false, attributionControl: true
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  const icon = L.divIcon({
+    className: 'site-pin',
+    html: '<span class="pin-ring"></span><span class="pin-dot"></span>',
+    iconSize: [28, 28], iconAnchor: [14, 14]
+  });
+
+  L.marker(SITE, { icon, title: 'River Side — Village' })
+    .addTo(map)
+    .bindPopup('<strong>River Side — Village</strong><br>Shtëpi në varg, Modeli 2');
+
+  // rrota e mausit aktivizohet vetëm pas klikimit, që faqja të skrollohet lirshëm
+  map.on('click', () => map.scrollWheelZoom.enable());
+  map.on('mouseout', () => map.scrollWheelZoom.disable());
+})();
+
+const copyBtn = $('#copy-coords');
+copyBtn?.addEventListener('click', async () => {
+  const txt = SITE.join(', ');
+  try {
+    await navigator.clipboard.writeText(txt);
+    copyBtn.textContent = 'U kopjua ✓';
+  } catch {
+    copyBtn.textContent = txt;
+  }
+  setTimeout(() => { copyBtn.textContent = 'Kopjo koordinatat'; }, 2200);
+});
+
 /* nav e ngjeshur pas skrollimit */
 const nav = $('#nav');
 const io = new IntersectionObserver(([e]) => nav.classList.toggle('is-solid', !e.isIntersecting),
@@ -142,4 +196,4 @@ io.observe($('.hero-inner'));
 const reveal = new IntersectionObserver(entries => {
   entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); reveal.unobserve(en.target); } });
 }, { threshold: 0.12 });
-$$('.story, .plans, .fac, .proj, .contact, .specs').forEach(s => { s.classList.add('rv'); reveal.observe(s); });
+$$('.story, .plans, .fac, .proj, .map, .contact, .specs').forEach(s => { s.classList.add('rv'); reveal.observe(s); });

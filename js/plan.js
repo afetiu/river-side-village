@@ -101,10 +101,10 @@ function door(d) {
 /* ---------- ndërtimi i planit ---------- */
 
 export function buildPlan(floor) {
-  const { w: BW, h: BH, wall } = BUILDING;
-  const pad = 130;
+  const { w: BW, h: BH, wallExt: wall, wallParty } = BUILDING;
+  const pad = 175;
   const svg = el('svg', {
-    viewBox: `${-pad} ${-pad - 150} ${BW + pad * 2} ${BH + pad * 2 + 400}`,
+    viewBox: `${-pad} ${-pad - 110} ${BW + pad * 2} ${BH + pad * 2 + 360}`,
     class: 'plan-svg', role: 'img',
     'aria-label': `Plani i katit — ${floor.name}`
   });
@@ -157,8 +157,8 @@ export function buildPlan(floor) {
     x: wall / 2, y: wall / 2, width: BW - wall, height: BH - wall,
     class: 'wall-ext', 'stroke-width': wall
   }));
-  // muret anësore = mure të përbashkëta (shtëpi në varg)
-  wallsG.appendChild(el('rect', { x: 0, y: 0, width: wall, height: BH, class: 'wall-party' }));
+  // muret anësore = mure të përbashkëta me shtëpitë ngjitur (shtëpi në varg)
+  wallsG.appendChild(el('rect', { x: 0, y: 0, width: wallParty, height: BH, class: 'wall-party' }));
   wallsG.appendChild(el('rect', { x: BW - wall, y: 0, width: wall, height: BH, class: 'wall-party' }));
   (floor.walls || []).forEach(w =>
     wallsG.appendChild(el('rect', { x: w.x, y: w.y, width: w.w, height: w.h, class: 'wall-int' })));
@@ -231,8 +231,33 @@ export function buildPlan(floor) {
     });
     t.textContent = text; dim.appendChild(t);
   };
-  dimLine(0, -186, BW, -186, '6.00 m', false);
-  dimLine(-62, 0, -62, BH, '11.80 m', true);
+  dimLine(0, -196, BW, -196, '6.00 m', false);
+  dimLine(-124, 0, -124, BH, '11.80 m', true);
+
+  /* kuotat e brendshme — vlerat e sakta nga projekti, në brezin anësor */
+  const IN_X = -58;   // zinxhiri vertikal majtas gabaritit
+  const IN_Y = -118;  // zinxhiri horizontal mbi gabaritin
+  (floor.dims || []).forEach(d => {
+    const vert = d.axis === 'y';
+    const x1 = vert ? IN_X : d.a[0], x2 = vert ? IN_X : d.b[0];
+    const y1 = vert ? d.a[1] : IN_Y, y2 = vert ? d.b[1] : IN_Y;
+
+    const inner = el('g', { class: 'dim-inner' });
+    inner.appendChild(el('line', { x1, y1, x2, y2, class: 'dim-line-in' }));
+    [[x1, y1], [x2, y2]].forEach(([px, py]) =>
+      inner.appendChild(el('line', {
+        x1: px - (vert ? 9 : 0), y1: py - (vert ? 0 : 9),
+        x2: px + (vert ? 9 : 0), y2: py + (vert ? 0 : 9), class: 'dim-tick'
+      })));
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const t = el('text', {
+      x: mx, y: my + (vert ? 0 : -10), class: 'dim-text-in',
+      transform: vert ? `rotate(-90 ${mx} ${my})` : null
+    });
+    t.textContent = d.t;
+    inner.appendChild(t);
+    dim.appendChild(inner);
+  });
   svg.appendChild(dim);
 
   /* titulli poshtë planit */
