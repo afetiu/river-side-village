@@ -30,14 +30,14 @@ function showRoom(room, floor) {
     note.textContent = 'Kjo hapësirë është nën shkallë dhe shfaqet me dush në projekt, por nuk është e etiketuar në tabelën e sipërfaqeve. Sipërfaqja është llogaritur nga kuotat.';
   } else note.hidden = true;
 
-  $$('.plan-svg .room').forEach(r => r.classList.toggle('is-sel', r.dataset.room === room.id));
+  $$('.hot').forEach(r => r.classList.toggle('is-sel', r.dataset.room === room.id));
   $$('.rp-rooms li').forEach(li => li.classList.toggle('is-sel', li.dataset.room === room.id));
 }
 
 function clearRoom() {
   panel.empty.hidden = false;
   panel.body.hidden = true;
-  $$('.plan-svg .room').forEach(r => r.classList.remove('is-sel'));
+  $$('.hot').forEach(r => r.classList.remove('is-sel'));
   $$('.rp-rooms li').forEach(li => li.classList.remove('is-sel'));
 }
 
@@ -59,17 +59,22 @@ function renderRoomList(floor) {
 }
 
 function highlight(id, on) {
-  const g = stage.querySelector(`.room[data-room="${id}"]`);
+  const g = stage.querySelector(`.hot[data-room="${id}"]`);
   if (g) g.classList.toggle('is-hot', on);
 }
 
 /* ---------- legjenda ---------- */
 
 function renderLegend(floor) {
+  // grupohet sipas etiketës, që "Hapësirë ditore" të mos dalë dy herë
   const seen = new Map();
-  floor.rooms.forEach(r => { if (r.area) seen.set(r.kind, KIND[r.kind]); });
-  $('#legend').innerHTML = [...seen].map(([k, v]) =>
-    `<li><i style="background:${v.fill}"></i>${v.label}</li>`).join('');
+  floor.rooms.forEach(r => {
+    if (!r.area) return;
+    const v = KIND[r.kind];
+    if (!seen.has(v.label)) seen.set(v.label, v.fill);
+  });
+  $('#legend').innerHTML = [...seen].map(([label, fill]) =>
+    `<li><i style="background:${fill}"></i>${label}</li>`).join('');
 }
 
 /* ---------- ndërrimi i katit ---------- */
@@ -82,17 +87,16 @@ function setFloor(id, { scroll = false } = {}) {
   $$('.floor-tabs button').forEach(b =>
     b.setAttribute('aria-selected', String(b.dataset.tab === id)));
 
-  const svg = buildPlan(floor);
-  svg.classList.add('is-entering');
-  stage.replaceChildren(svg);
-  requestAnimationFrame(() => svg.classList.remove('is-entering'));
+  const fig = buildPlan(floor);
+  fig.classList.add('is-entering');
+  stage.replaceChildren(fig);
+  requestAnimationFrame(() => fig.classList.remove('is-entering'));
 
-  svg.querySelectorAll('.room').forEach(g => {
+  fig.querySelectorAll('.hot').forEach(g => {
     const room = floor.rooms.find(r => r.id === g.dataset.room);
     g.addEventListener('click', () => showRoom(room, floor));
-    g.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showRoom(room, floor); }
-    });
+    g.addEventListener('mouseenter', () => highlight(room.id, true));
+    g.addEventListener('mouseleave', () => highlight(room.id, false));
   });
 
   $('#floor-blurb').textContent = floor.blurb;

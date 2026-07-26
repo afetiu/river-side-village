@@ -118,8 +118,8 @@
 
     <div class="plan-layout">
 
-      <!-- plani -->
-      <div class="plan-col">
+      <!-- majtas: zgjedhja e katit dhe të dhënat -->
+      <div class="plan-info">
         <div class="floor-tabs" role="tablist" aria-label="Zgjidh katin">
           <button role="tab" data-tab="perdhesa" aria-selected="true">
             <span class="tab-lvl">+0.00</span><span class="tab-name">Përdhesa</span><span class="tab-area">68,47 m²</span>
@@ -132,44 +132,46 @@
           </button>
         </div>
 
-        <div class="plan-bar">
-          <p class="floor-blurb" id="floor-blurb"></p>
-        </div>
+        <p class="floor-blurb" id="floor-blurb"></p>
 
-        <div class="plan-stage" id="plan-stage"></div>
+        <div class="info-cols">
+          <aside class="room-panel" id="room-panel" aria-live="polite">
+            <div class="rp-empty" id="rp-empty">
+              <span class="rp-icon" aria-hidden="true">◳</span>
+              <p>Klikoni një dhomë në plan për detajet.</p>
+            </div>
+            <div class="rp-body" id="rp-body" hidden>
+              <p class="rp-kind" id="rp-kind"></p>
+              <h4 class="rp-name" id="rp-name"></h4>
+              <p class="rp-area" id="rp-area"></p>
+              <dl class="rp-meta">
+                <div><dt>Dyshemeja</dt><dd id="rp-finish"></dd></div>
+                <div><dt>Kati</dt><dd id="rp-floor"></dd></div>
+                <div><dt>Perimetri</dt><dd id="rp-per"></dd></div>
+              </dl>
+              <p class="rp-note" id="rp-note" hidden></p>
+            </div>
+          </aside>
 
-        <div class="plan-foot">
-          <ul class="legend" id="legend"></ul>
+          <div class="room-list-col">
+            <p class="rl-head">Dhomat e katit</p>
+            <ul class="rp-rooms" id="rp-rooms"></ul>
+            <ul class="legend" id="legend"></ul>
+          </div>
         </div>
       </div>
 
-      <!-- paneli i dhomës -->
-      <aside class="room-panel" id="room-panel" aria-live="polite">
-        <div class="rp-empty" id="rp-empty">
-          <span class="rp-icon" aria-hidden="true">◳</span>
-          <p>Klikoni një dhomë në plan për detajet.</p>
-        </div>
-        <div class="rp-body" id="rp-body" hidden>
-          <p class="rp-kind" id="rp-kind"></p>
-          <h4 class="rp-name" id="rp-name"></h4>
-          <p class="rp-area" id="rp-area"></p>
-          <dl class="rp-meta">
-            <div><dt>Dyshemeja</dt><dd id="rp-finish"></dd></div>
-            <div><dt>Kati</dt><dd id="rp-floor"></dd></div>
-            <div><dt>Perimetri</dt><dd id="rp-per"></dd></div>
-          </dl>
-          <p class="rp-note" id="rp-note" hidden></p>
-        </div>
-        <ul class="rp-rooms" id="rp-rooms"></ul>
-      </aside>
+      <!-- djathtas: plani -->
+      <div class="plan-col">
+        <div class="plan-stage" id="plan-stage"></div>
+      </div>
 
     </div>
 
     <p class="disclaimer">
-      Planet e paraqitura janë vizatime ilustruese, të ndërtuara mbi kuotat dhe
-      sipërfaqet e projektit zbatues. Sipërfaqet e shënuara janë zyrtare sipas
-      projektit; përmasat e mobilimit janë tregues. Për matje detyruese
-      referojuni projektit të arkitektit.
+      Planet e paraqitura janë fletët origjinale të projektit zbatues të
+      NITI Construction, të pastruara vetëm për lexueshmëri — kuotat dhe
+      sipërfaqet janë ato të arkitektit, pa asnjë rivizatim.
     </p>
   </div>
 </section>
