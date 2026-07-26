@@ -1,268 +1,298 @@
 /* =========================================================
    River Side Village — Modeli 2 — Nr. 7
-   Pamje e vetme: identiteti + harta + kontakti majtas,
-   planimetria djathtas. Në celular: shtresa të radhitura.
+   Një pamje e vetme. Sistem i vetëm pllakash, tipografi e lehtë,
+   ritëm vertikal i njëjtë në të dyja kolonat.
    ========================================================= */
 
 :root{
-  --ink:#14100D;
-  --ink-2:#3B3128;
-  --ink-3:#736658;
-  --paper:#F5F1E8;
-  --paper-2:#EBE5D8;
-  --paper-3:#DFD7C6;
-  --brick:#C25C31;
-  --line:#D5CBB8;
-  --white:#FFFDF8;
+  /* ---- ngjyrat ---- */
+  --ink:#171310;
+  --ink-2:#4A3F35;
+  --ink-3:#8A7C6D;
+  --paper:#F2EDE4;
+  --paper-2:#E8E1D5;
+  --paper-3:#DAD1C2;
+  --white:#FCFAF6;
+  --brick:#C4643A;
 
-  --glass:rgba(20,16,13,.62);
-  --glass-2:rgba(20,16,13,.44);
-  --edge:rgba(255,253,248,.13);
-  --txt:#F3EEE5;
-  --txt-2:rgba(243,238,229,.66);
-  --txt-3:rgba(243,238,229,.44);
+  --txt:#F1ECE3;
+  --txt-2:rgba(241,236,227,.62);
+  --txt-3:rgba(241,236,227,.38);
 
-  --f-disp:'Archivo',system-ui,sans-serif;
-  --f-body:'Archivo',system-ui,sans-serif;
+  --panel:rgba(247,242,234,.055);
+  --panel-line:rgba(247,242,234,.11);
+  --panel-line-2:rgba(247,242,234,.07);
+
+  /* ---- ritmi ---- */
+  --s1:6px; --s2:10px; --s3:16px; --s4:24px; --s5:34px;
+  --r:10px;
+  --gut:clamp(16px,1.9vw,30px);
+
+  --f:'Archivo',system-ui,sans-serif;
   --f-mono:'JetBrains Mono',ui-monospace,monospace;
   --ease:cubic-bezier(.22,.61,.36,1);
-  --r:6px;
 }
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
-  margin:0;background:#0E0B09;color:var(--txt);
-  font-family:var(--f-body);font-size:15px;line-height:1.5;font-weight:450;
-  -webkit-font-smoothing:antialiased;
+  margin:0;background:#100D0B;color:var(--txt);
+  font-family:var(--f);font-size:15px;line-height:1.55;font-weight:400;
+  font-stretch:100%;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  /* shiriti i sipërm + skena ndajnë saktësisht një ekran */
+  height:100svh;overflow:hidden;display:flex;flex-direction:column;
 }
 img{max-width:100%;display:block;height:auto}
-h1,h2,h3{font-family:var(--f-disp);margin:0;line-height:1;font-weight:800;
-  font-stretch:112%;letter-spacing:-.035em}
+h1,h2,h3{margin:0;font-weight:400;line-height:1.05;letter-spacing:-.02em}
 em{font-style:normal}
 a{color:inherit}
 button{font:inherit;color:inherit}
 
+/* etiketë teknike — e njëjta gjuhë kudo */
+.lbl,.tile-head h2,.facts dt,.contact-lbl,.status,.coords,.plan-note,
+.tab-lvl,.tab-area,.mini-link{
+  font-family:var(--f-mono);font-weight:400;
+  font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;
+}
+
 /* ---------- sfondi ---------- */
 .bg{position:fixed;inset:0;z-index:0}
-.bg img{width:100%;height:100%;object-fit:cover;object-position:center 45%;
-  filter:saturate(.7) brightness(.42)}
+.bg img{width:100%;height:100%;object-fit:cover;object-position:center 46%;
+  filter:saturate(.55) brightness(.34) blur(1px);transform:scale(1.03)}
 .bg::after{content:'';position:absolute;inset:0;
-  background:radial-gradient(120% 100% at 25% 40%,rgba(14,11,9,.62),rgba(14,11,9,.9))}
+  background:
+    radial-gradient(130% 105% at 22% 32%,rgba(16,13,11,.55),rgba(16,13,11,.93) 70%),
+    linear-gradient(180deg,rgba(16,13,11,.7),transparent 22%,transparent 72%,rgba(16,13,11,.8))}
+
+/* ---------- shiriti i sipërm ---------- */
+.topbar{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  padding:var(--gut) var(--gut) 0;
+}
+.brand{display:flex;align-items:center;gap:.55rem}
+.brand-mark{font-family:var(--f-mono);font-size:.6rem;font-weight:400;letter-spacing:.06em;
+  border:1px solid var(--panel-line);color:var(--txt-2);
+  padding:.4em .5em;border-radius:5px}
+.brand-txt{font-size:.94rem;font-weight:500;letter-spacing:-.015em}
+.brand-no{font-family:var(--f-mono);font-size:.7rem;color:var(--brick);letter-spacing:.04em}
+.status{margin:0;display:inline-flex;align-items:center;gap:.55em;color:var(--txt-3)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--brick);flex:none;
+  box-shadow:0 0 0 0 rgba(196,100,58,.7);animation:pulse 3s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(196,100,58,0)}100%{box-shadow:0 0 0 0 rgba(196,100,58,0)}}
 
 /* ---------- skena ---------- */
 .stage{
   position:relative;z-index:1;
-  height:100svh;
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr);
-  gap:clamp(14px,1.6vw,26px);
-  padding:clamp(14px,1.8vw,26px);
+  flex:1;min-height:0;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);
+  gap:var(--gut);
+  padding:var(--s4) var(--gut) var(--gut);
 }
 
 /* ═══════════ kolona e majtë ═══════════ */
-.col-left{display:grid;grid-template-rows:auto auto auto minmax(0,1fr);gap:clamp(12px,1.6vh,22px);min-height:0}
+.col-left{display:grid;grid-template-rows:auto auto minmax(0,1fr);
+  gap:clamp(14px,2.2vh,26px);min-height:0}
 
-.brand{display:flex;align-items:center;gap:.6rem}
-.brand-mark{font-family:var(--f-mono);font-size:.68rem;font-weight:500;
-  background:var(--txt);color:var(--ink);padding:.34em .48em;border-radius:4px}
-.brand-txt{font-family:var(--f-disp);font-weight:800;font-stretch:112%;
-  font-size:1rem;letter-spacing:-.03em}
-.brand-txt em{color:var(--brick)}
+.intro h1{
+  font-size:clamp(1.9rem,3.7vw,3.5rem);
+  font-weight:300;font-stretch:104%;letter-spacing:-.035em;line-height:1.02;
+}
+.intro h1 em{color:var(--txt-3);font-weight:200}
+.lede{margin:var(--s3) 0 0;max-width:46ch;color:var(--txt-2);font-size:.95rem;line-height:1.6}
 
-.eyebrow{display:inline-flex;align-items:center;gap:.55em;margin:0 0 .9rem;
-  font-family:var(--f-mono);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--txt-2)}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--brick);
-  box-shadow:0 0 0 0 rgba(194,92,49,.8);animation:pulse 2.6s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 11px rgba(194,92,49,0)}100%{box-shadow:0 0 0 0 rgba(194,92,49,0)}}
+/* faktet — rresht i hollë, pa kuti */
+.facts{display:flex;flex-wrap:wrap;gap:var(--s3) clamp(18px,2.6vw,38px);margin:0;
+  padding:clamp(12px,1.7vh,18px) 0;
+  border-block:1px solid var(--panel-line-2)}
+.facts dt{color:var(--txt-3);margin-bottom:.35rem;white-space:nowrap}
+.facts dd{margin:0;font-size:clamp(.95rem,1.15vw,1.18rem);font-weight:500;
+  letter-spacing:-.02em;white-space:nowrap}
+.facts dd span{font-size:.6em;color:var(--txt-3);margin-left:.15em;font-weight:400}
+.price{color:var(--brick);font-weight:500}
 
-.intro h1{font-size:clamp(2rem,4.2vw,3.9rem);font-weight:900;font-stretch:120%;
-  letter-spacing:-.05em;text-transform:uppercase}
-.intro h1 em{color:var(--txt-3);font-weight:500;font-stretch:100%}
-.lede{margin:.9rem 0 0;max-width:48ch;color:var(--txt-2);font-size:.96rem}
-
-.facts{display:flex;flex-wrap:wrap;gap:.7rem clamp(1rem,2.4vw,2.2rem);margin:0;
-  padding:clamp(.8rem,1.4vh,1.1rem) 0;border-block:1px solid var(--edge)}
-.facts dt{font-family:var(--f-mono);font-size:.58rem;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--txt-3);margin-bottom:.3rem;white-space:nowrap}
-.facts dd{margin:0;font-family:var(--f-disp);font-weight:800;font-stretch:108%;
-  font-size:clamp(.9rem,1.25vw,1.25rem);letter-spacing:-.04em;white-space:nowrap}
-.facts dd span{font-size:.55em;color:var(--txt-3);margin-left:.12em}
-.price{color:var(--brick)}
-
-/* pllakat: harta + pamjet/kontakti */
-.tiles{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
-  gap:clamp(12px,1.4vw,20px);min-height:0}
-.tile{background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--edge);
-  border-radius:var(--r);padding:clamp(.75rem,1.2vh,1rem);display:flex;flex-direction:column;
-  gap:.7rem;min-height:0}
-.tile-head{display:flex;align-items:baseline;justify-content:space-between;gap:.8rem}
-.tile-head h2{font-size:.82rem;font-weight:700;letter-spacing:-.01em}
-.mini-link{font-family:var(--f-mono);font-size:.63rem;color:var(--brick);text-decoration:none}
+/* ---------- pllakat ---------- */
+.tiles{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);
+  gap:var(--gut);min-height:0}
+.tile,.col-right{
+  background:var(--panel);
+  border:1px solid var(--panel-line);
+  border-radius:var(--r);
+  backdrop-filter:blur(18px) saturate(1.1);
+}
+.tile{padding:var(--s3);display:flex;flex-direction:column;gap:var(--s2);min-height:0}
+.tile-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);
+  padding-bottom:var(--s2);border-bottom:1px solid var(--panel-line-2)}
+.tile-head h2{color:var(--txt-3)}
+.mini-link{color:var(--brick);text-decoration:none;transition:color .25s}
 .mini-link:hover{color:var(--txt)}
 
-.map-mount{flex:1;min-height:120px;border-radius:4px;overflow:hidden;background:#241d18;z-index:0}
-.coords{margin:0;font-family:var(--f-mono);font-size:.62rem;color:var(--txt-3);text-align:center}
+.map-mount{flex:1;min-height:110px;border-radius:6px;overflow:hidden;background:#221b16;z-index:0}
+.coords{margin:0;color:var(--txt-3);text-align:center;cursor:pointer;
+  transition:color .25s;letter-spacing:.08em}
+.coords:hover{color:var(--txt-2)}
 
 .shots{list-style:none;margin:0;padding:0;display:grid;flex:1;min-height:0;
-  grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:.45rem}
+  grid-template-rows:repeat(2,minmax(0,1fr));gap:var(--s1)}
 .shots li{min-height:0}
-.shots button{padding:0;border:1px solid var(--edge);border-radius:4px;overflow:hidden;
+.shots button{padding:0;border:1px solid var(--panel-line-2);border-radius:6px;overflow:hidden;
   background:none;cursor:pointer;display:block;width:100%;height:100%;
-  transition:border-color .25s,transform .25s var(--ease)}
-.shots button:hover{border-color:var(--brick);transform:translateY(-2px)}
-.shots img{width:100%;height:100%;object-fit:cover}
+  transition:border-color .3s var(--ease),transform .3s var(--ease)}
+.shots button:hover{border-color:rgba(196,100,58,.55);transform:translateY(-1px)}
+.shots img{width:100%;height:100%;object-fit:cover;
+  filter:saturate(.85);transition:filter .3s var(--ease)}
+.shots button:hover img{filter:saturate(1)}
 
-.contact{margin-top:auto;display:grid;gap:.4rem}
-.contact-lbl{margin:0;font-family:var(--f-mono);font-size:.58rem;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--txt-3)}
-.tel{display:block;text-decoration:none;background:var(--txt);color:var(--ink);
-  border-radius:4px;padding:.6em .8em;text-align:center;
-  font-family:var(--f-mono);font-size:.82rem;font-weight:500;
-  transition:background .25s,color .25s}
-.tel:hover{background:var(--brick);color:var(--white)}
+.contact{display:grid;gap:var(--s1);padding-top:var(--s2);
+  border-top:1px solid var(--panel-line-2)}
+.contact-lbl{margin:0 0 .15rem;color:var(--txt-3)}
+.tel{display:block;text-decoration:none;
+  background:transparent;border:1px solid var(--panel-line);color:var(--txt);
+  border-radius:6px;padding:.6em .7em;text-align:center;
+  font-family:var(--f-mono);font-size:.78rem;font-weight:400;letter-spacing:.03em;
+  transition:background .25s,border-color .25s,color .25s}
+.tel:hover{background:var(--brick);border-color:var(--brick);color:var(--white)}
 
 /* ═══════════ kolona e djathtë — plani ═══════════ */
-.col-right{background:var(--paper);border-radius:var(--r);color:var(--ink);
+.col-right{color:var(--ink);background:var(--paper);border-color:rgba(23,19,16,.1);
   display:grid;grid-template-rows:auto minmax(0,1fr) auto;
-  gap:.7rem;padding:clamp(.7rem,1.2vw,1.1rem);min-height:0}
+  gap:var(--s3);padding:var(--s3);min-height:0}
 
-.floor-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}
-.floor-tabs button{background:var(--paper-2);border:0;border-radius:4px;cursor:pointer;
-  padding:.55rem .6rem;display:flex;flex-direction:column;gap:.1rem;text-align:left;
-  transition:background .25s var(--ease),color .25s var(--ease)}
-.floor-tabs button:hover{background:var(--paper-3)}
-.tab-lvl{font-family:var(--f-mono);font-size:.57rem;letter-spacing:.1em;color:var(--ink-3)}
-.tab-name{font-family:var(--f-disp);font-weight:800;font-stretch:110%;font-size:.98rem;letter-spacing:-.035em}
-.tab-area{font-family:var(--f-mono);font-size:.6rem;color:var(--ink-3)}
-.floor-tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
-.floor-tabs button[aria-selected="true"] .tab-lvl,
-.floor-tabs button[aria-selected="true"] .tab-area{color:rgba(245,241,232,.6)}
+.floor-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border-bottom:1px solid var(--paper-3)}
+.floor-tabs button{background:none;border:0;border-bottom:2px solid transparent;
+  cursor:pointer;padding:.35rem .5rem .6rem;display:flex;flex-direction:column;gap:.12rem;
+  text-align:left;color:var(--ink-3);
+  transition:color .25s var(--ease),border-color .25s var(--ease)}
+.floor-tabs button:hover{color:var(--ink-2)}
+.tab-lvl{font-size:.56rem;letter-spacing:.12em}
+.tab-name{font-size:1rem;font-weight:500;letter-spacing:-.02em;
+  font-family:var(--f);text-transform:none}
+.tab-area{font-size:.58rem;letter-spacing:.08em}
+.floor-tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brick)}
+.floor-tabs button[aria-selected="true"] .tab-name{font-weight:600}
 
 .plan-stage{min-height:0;display:flex;align-items:center;justify-content:center}
 .plan-svg{display:block;max-width:100%;max-height:100%;width:auto;height:auto;color:var(--ink);
   transition:opacity .45s var(--ease),transform .45s var(--ease)}
-.plan-svg.is-entering{opacity:0;transform:translateY(10px) scale(.99)}
+.plan-svg.is-entering{opacity:0;transform:translateY(8px) scale(.995)}
 
-.plan-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem}
-.rooms-inline{list-style:none;display:flex;flex-wrap:wrap;gap:.3rem .5rem;margin:0;padding:0}
-.rooms-inline li{display:flex;align-items:center;gap:.35em;cursor:pointer;
-  background:var(--paper-2);border-radius:3px;padding:.24em .5em;
-  font-size:.72rem;transition:background .2s,color .2s}
-.rooms-inline li:hover,.rooms-inline li.is-sel{background:var(--ink);color:var(--paper)}
-.rl-sw{width:9px;height:9px;border-radius:2px;flex:none}
-.rl-area{font-family:var(--f-mono);font-size:.65rem;opacity:.75}
-.plan-note{margin:0;font-family:var(--f-mono);font-size:.58rem;color:var(--ink-3)}
+.plan-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:var(--s2) var(--s3);padding-top:var(--s2);border-top:1px solid var(--paper-3)}
+.rooms-inline{list-style:none;display:flex;flex-wrap:wrap;gap:.25rem .3rem;margin:0;padding:0}
+.rooms-inline li{display:flex;align-items:center;gap:.4em;cursor:pointer;
+  border:1px solid var(--paper-3);border-radius:99px;padding:.2em .6em .2em .45em;
+  font-size:.7rem;color:var(--ink-2);
+  transition:background .2s,color .2s,border-color .2s}
+.rooms-inline li:hover{border-color:var(--ink-3)}
+.rooms-inline li.is-sel{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.rl-sw{width:8px;height:8px;border-radius:99px;flex:none}
+.rl-area{font-family:var(--f-mono);font-size:.62rem;opacity:.7}
+.plan-note{margin:0;color:var(--ink-3);opacity:.75}
 
 /* ---------- elementet e planit ---------- */
 .slab{fill:var(--white)}
-.outside-rect{fill:none;stroke:var(--line);stroke-width:3;stroke-dasharray:14 10}
-.outside-label{font-family:var(--f-mono);font-size:26px;fill:var(--ink-3);text-anchor:middle;letter-spacing:.05em}
+.outside-rect{fill:none;stroke:var(--paper-3);stroke-width:3;stroke-dasharray:14 10}
+.outside-label{font-family:var(--f-mono);font-size:25px;fill:var(--ink-3);text-anchor:middle;letter-spacing:.05em}
 .room{cursor:pointer}
 .room-fill{transition:fill .3s var(--ease)}
 .room-hit{fill:transparent;stroke:transparent;stroke-width:0;cursor:pointer;transition:fill .25s,stroke .25s}
-.room:hover .room-hit,.room.is-hot .room-hit{fill:rgba(194,92,49,.16)}
-.room.is-sel .room-hit{fill:rgba(194,92,49,.24);stroke:var(--brick);stroke-width:7}
+.room:hover .room-hit,.room.is-hot .room-hit{fill:rgba(196,100,58,.15)}
+.room.is-sel .room-hit{fill:rgba(196,100,58,.22);stroke:var(--brick);stroke-width:7}
 .room:focus-visible{outline:none}
 .room:focus-visible .room-hit{stroke:var(--brick);stroke-width:7}
 
 .wall-ext{fill:none;stroke:var(--ink)}
 .wall-int{fill:var(--ink)}
-.wall-party{fill:var(--ink);opacity:.88}
+.wall-party{fill:var(--ink);opacity:.86}
 .win-cut,.rail-cut{fill:var(--white)}
 .win-glass{stroke:var(--ink);stroke-width:5}
 .rail-line{stroke:var(--ink-3);stroke-width:4}
 .door-arc{fill:none;stroke:var(--ink-3);stroke-width:3.5}
 .door-leaf-line{stroke:var(--ink);stroke-width:6}
 .door-leaf{fill:var(--white)}
-.f-line{fill:none;stroke:var(--ink-3);stroke-width:3.2;opacity:.45}
+.f-line{fill:none;stroke:var(--ink-3);stroke-width:3.2;opacity:.5}
 .stair-bg{fill:var(--paper-2)}
 .stair-tread{stroke:var(--ink-3);stroke-width:3}
 .stair-arrow{stroke:var(--brick);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
 .room-name,.room-area{paint-order:stroke fill;stroke:var(--white);stroke-width:7px;
   stroke-linejoin:round;text-anchor:middle;pointer-events:none}
-.room-name{font-family:var(--f-disp);font-weight:700;font-stretch:105%;fill:var(--ink);letter-spacing:-.015em}
+.room-name{font-family:var(--f);font-weight:500;fill:var(--ink);letter-spacing:-.01em}
 .room-area{font-family:var(--f-mono);fill:var(--ink-3)}
 
 .dim-line,.dim-tick{stroke:var(--ink-3);stroke-width:2.5}
-.dim-text{font-family:var(--f-mono);font-size:28px;fill:var(--ink-3);text-anchor:middle}
-.dim-line-in{stroke:var(--brick);stroke-width:2.5;stroke-dasharray:10 7;opacity:.85}
-.dim-text-in{font-family:var(--f-mono);font-size:24px;fill:var(--brick);text-anchor:middle;
+.dim-text{font-family:var(--f-mono);font-size:27px;fill:var(--ink-3);text-anchor:middle}
+.dim-line-in{stroke:var(--brick);stroke-width:2.5;stroke-dasharray:10 7;opacity:.8}
+.dim-text-in{font-family:var(--f-mono);font-size:23px;fill:var(--brick);text-anchor:middle;
   paint-order:stroke fill;stroke:var(--white);stroke-width:7px;stroke-linejoin:round}
-.cap-name{font-family:var(--f-disp);font-weight:900;font-stretch:112%;font-size:44px;
-  letter-spacing:-.045em;fill:var(--ink);text-transform:uppercase}
-.cap-area{font-family:var(--f-mono);font-size:26px;fill:var(--ink-3);text-anchor:end}
-.cap-rule{stroke:var(--line);stroke-width:3}
+.cap-name{font-family:var(--f);font-weight:500;font-size:42px;
+  letter-spacing:-.01em;fill:var(--ink)}
+.cap-area{font-family:var(--f-mono);font-size:25px;fill:var(--ink-3);text-anchor:end}
+.cap-rule{stroke:var(--paper-3);stroke-width:3}
 
 /* ---------- harta ---------- */
 .site-pin{position:relative}
 .pin-dot{position:absolute;inset:8px;background:var(--brick);border-radius:50%;
   box-shadow:0 0 0 3px var(--white)}
-.pin-ring{position:absolute;inset:0;border-radius:50%;background:rgba(194,92,49,.35);
-  animation:pinPulse 2.6s var(--ease) infinite}
+.pin-ring{position:absolute;inset:0;border-radius:50%;background:rgba(196,100,58,.32);
+  animation:pinPulse 2.8s var(--ease) infinite}
 @keyframes pinPulse{0%{transform:scale(.55);opacity:.9}70%{transform:scale(1.5);opacity:0}100%{opacity:0}}
-.leaflet-container{font-family:var(--f-body);background:#241d18}
+.leaflet-container{font-family:var(--f);background:#221b16}
 .leaflet-control-attribution{font-size:9px!important}
+.leaflet-control-zoom a{border-radius:4px!important}
 
-/* ---------- shiriti i thirrjes (celular) ----------
-   Qëndron jashtë pllakave: backdrop-filter i tyre krijon containing-block
-   dhe do ta bllokonte `position:fixed`. */
+/* ---------- shiriti i thirrjes (celular) ---------- */
 .callbar{
   display:none;position:fixed;left:0;right:0;bottom:0;z-index:150;
-  grid-template-columns:1fr 1fr;gap:1px;background:var(--edge);
+  grid-template-columns:1fr 1fr;gap:1px;background:var(--panel-line);
   padding-bottom:env(safe-area-inset-bottom);
 }
-.callbar a{
-  text-decoration:none;text-align:center;padding:1em .6em;
-  background:rgba(20,16,13,.94);backdrop-filter:blur(14px);color:var(--txt);
-  font-family:var(--f-mono);font-size:.85rem;font-weight:500;
-  transition:background .25s,color .25s;
-}
+.callbar a{text-decoration:none;text-align:center;padding:1em .6em;
+  background:rgba(16,13,11,.94);backdrop-filter:blur(16px);color:var(--txt);
+  font-family:var(--f-mono);font-size:.8rem;letter-spacing:.03em;
+  transition:background .25s,color .25s}
 .callbar a:active,.callbar a:hover{background:var(--brick);color:var(--white)}
 
 /* ---------- lightbox ---------- */
 .lb{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
-  background:rgba(10,8,6,.92);backdrop-filter:blur(8px);padding:4vmin}
+  background:rgba(12,9,7,.94);backdrop-filter:blur(10px);padding:4vmin}
 .lb[hidden]{display:none}
-.lb figure{margin:0;max-width:min(1200px,92vw);max-height:88vh;display:grid;gap:.8rem;justify-items:center}
-.lb img{max-width:100%;max-height:80vh;width:auto;border-radius:4px;background:var(--paper)}
-.lb figcaption{font-family:var(--f-mono);font-size:.72rem;color:var(--txt-2)}
+.lb figure{margin:0;max-width:min(1200px,92vw);max-height:88vh;display:grid;gap:var(--s3);justify-items:center}
+.lb img{max-width:100%;max-height:80vh;width:auto;border-radius:6px;background:var(--paper)}
+.lb figcaption{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--txt-3)}
 .lb-close{position:absolute;top:2vmin;right:2.4vmin;background:none;border:0;
-  font-size:1.6rem;color:var(--txt);cursor:pointer;line-height:1;padding:.3em}
+  font-size:1.4rem;color:var(--txt-2);cursor:pointer;line-height:1;padding:.4em;
+  transition:color .25s}
 .lb-close:hover{color:var(--brick)}
 
 /* ---------- ekrane të mesme ---------- */
 @media (max-width:1240px){
-  .stage{grid-template-columns:minmax(0,1fr) minmax(0,.95fr)}
-  .facts{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stage{grid-template-columns:minmax(0,1fr) minmax(0,.92fr)}
   .tiles{grid-template-columns:1fr}
-  .tile-map{display:none}         /* harta kalon në modalitetin celular */
+  .tile-map{display:none}
 }
 
-/* ---------- celular / tablet vertikal ---------- */
+/* ---------- celular ---------- */
 @media (max-width:900px), (max-height:560px){
-  body{font-size:15px}
-  .stage{height:auto;grid-template-columns:1fr;gap:14px;padding:14px 14px 84px}
-  /* fëmijët e kolonës së majtë bëhen elementë të skenës, që plani të ngjitet
-     menjëherë pas fakteve — para hartës dhe pamjeve */
+  body{height:auto;overflow:visible;display:block}
+  .topbar{flex-direction:column;align-items:flex-start;gap:var(--s2)}
+  .stage{flex:none;min-height:0;grid-template-columns:1fr;gap:var(--s4);
+    padding:var(--s4) var(--gut) 88px}
   .col-left{display:contents}
-  .brand{order:1}
-  .intro{order:2}
-  .facts{order:3}
-  .col-right{order:4}
-  .tiles{order:5}
-  .intro h1{font-size:clamp(1.9rem,8.6vw,2.8rem)}
-  .facts{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .tiles{grid-template-columns:1fr}
+  .intro{order:1}
+  .facts{order:2}
+  .col-right{order:3}
+  .tiles{order:4;grid-template-columns:1fr}
   .tile-map{display:flex}
-  .map-mount{height:200px;flex:none}
+  .map-mount{height:210px;flex:none}
+  .shots{grid-template-columns:repeat(2,1fr);grid-template-rows:none}
+  .shots li{aspect-ratio:4/3}
   .col-right{min-height:auto}
-  .plan-stage{padding:.4rem 0}
   .plan-svg{max-height:none;width:100%}
-  .shots{grid-template-columns:repeat(4,1fr)}
-
-  .contact{display:none}          /* zëvendësohet nga shiriti i thirrjes */
+  .contact{display:none}
   .callbar{display:grid}
 }
 

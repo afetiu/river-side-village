@@ -81,12 +81,13 @@ function door(d) {
 export function buildPlan(floor, opts = {}) {
   const { w: BW, h: BH, wallExt: wall, wallR } = BUILDING;
   const bare = !!opts.bare;              // vetëm gjeometria, për mbivendosje
-  const pad = bare ? 0 : 150;
-  const topPad = bare ? 0 : 115;
-  const botPad = bare ? 0 : 230;
+  // Kuotat rrinë vetëm majtas dhe sipër, prandaj hapësira është asimetrike:
+  // kështu plani zë sa më shumë nga korniza pa lënë boshllëk djathtas.
+  const L = bare ? 0 : 168, R = bare ? 0 : 52;
+  const T = bare ? 0 : 248, B = bare ? 0 : 48;
 
   const svg = el('svg', {
-    viewBox: bare ? `0 0 ${BW} ${BH}` : `${-pad} ${-pad - topPad} ${BW + pad * 2} ${BH + pad * 2 + botPad}`,
+    viewBox: `${-L} ${-T} ${BW + L + R} ${BH + T + B}`,
     class: 'plan-svg', role: 'img', 'aria-label': `Plani i katit — ${floor.name}`
   });
 
@@ -196,14 +197,6 @@ export function buildPlan(floor, opts = {}) {
     : chain(d.a, -118, d.b, -118, d.t, false, 1));
   svg.appendChild(dim);
 
-  const capY = BH + (floor.outside?.length ? 210 : 120);
-  const cap = el('g', { class: 'plan-cap' });
-  cap.appendChild(el('line', { x1: 0, y1: capY - 52, x2: BW, y2: capY - 52, class: 'cap-rule' }));
-  const t1 = el('text', { x: 0, y: capY, class: 'cap-name' }); t1.textContent = floor.name.toUpperCase();
-  const t2 = el('text', { x: BW, y: capY, class: 'cap-area' });
-  t2.textContent = `${fmt(floor.area)} m²  ·  ${floor.level}`;
-  cap.appendChild(t1); cap.appendChild(t2);
-  svg.appendChild(cap);
-
+  // Titulli i katit nuk përsëritet këtu — e mban skeda mbi plan.
   return svg;
 }
