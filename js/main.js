@@ -1,6 +1,5 @@
 import { FLOORS, KIND } from './floors.js';
 import { buildPlan } from './plan.js';
-import { buildIso } from './iso.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -10,7 +9,6 @@ const stage = $('#plan-stage');
 const panel = { empty: $('#rp-empty'), body: $('#rp-body') };
 
 let current = FLOORS[0];
-let iso;
 
 /* ---------- paneli i dhomës ---------- */
 
@@ -98,31 +96,19 @@ function setFloor(id, { scroll = false } = {}) {
   });
 
   $('#floor-blurb').textContent = floor.blurb;
-  $('#orig-link').href = `assets/img/orig-${floor.id}.jpg`;
-  $('#orig-img').src = `assets/img/orig-${floor.id}.jpg`;
   renderRoomList(floor);
   renderLegend(floor);
   clearRoom();
-  iso?.setActive(id);
 
   if (scroll) $('#planimetria').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ---------- inicializimi ---------- */
 
-iso = buildIso($('#iso'), id => setFloor(id));
 setFloor('perdhesa');
 
 $$('.floor-tabs button').forEach(b =>
   b.addEventListener('click', () => setFloor(b.dataset.tab)));
-
-const ex = $('#explode');
-ex.addEventListener('click', () => {
-  const on = ex.getAttribute('aria-pressed') !== 'true';
-  ex.setAttribute('aria-pressed', String(on));
-  ex.querySelector('.toggle-txt').textContent = on ? 'Bashko katet' : 'Shpërndaj katet';
-  iso.setExploded(on);
-});
 
 /* shigjetat majtas/djathtas mes kateve */
 document.addEventListener('keydown', e => {
@@ -131,15 +117,6 @@ document.addEventListener('keydown', e => {
   const i = FLOORS.indexOf(current);
   const n = e.key === 'ArrowRight' ? i + 1 : i - 1;
   if (FLOORS[n]) setFloor(FLOORS[n].id);
-});
-
-/* shfaq / fsheh vizatimin origjinal krahas planit të vizatuar */
-const so = $('#show-orig');
-so.addEventListener('click', () => {
-  const on = so.getAttribute('aria-pressed') !== 'true';
-  so.setAttribute('aria-pressed', String(on));
-  $('#plan-orig').hidden = !on;
-  $('.plan-stage').classList.toggle('is-split', on);
 });
 
 /* ---------- harta ---------- */

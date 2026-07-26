@@ -127,9 +127,17 @@ export function buildPlan(floor) {
     svg.appendChild(g);
   });
 
+  /* gabariti i mbyllur — drejtkëndësh, ose L kur kati ka pjesë të tërhequr */
+  const rc = floor.recess;
+  const outline = (inset = 0) => {
+    const i = inset;
+    if (!rc) return `M ${i} ${i} H ${BW - i} V ${BH - i} H ${i} Z`;
+    return `M ${i} ${i} H ${BW - i} V ${rc.y + i} H ${rc.x + i} V ${BH - i} H ${i} Z`;
+  };
+
   /* pllaka */
   const slab = el('g', { filter: 'url(#soft)' });
-  slab.appendChild(el('rect', { x: 0, y: 0, width: BW, height: BH, class: 'slab' }));
+  slab.appendChild(el('path', { d: outline(0), class: 'slab' }));
   svg.appendChild(slab);
 
   /* dhomat */
@@ -153,13 +161,14 @@ export function buildPlan(floor) {
 
   /* muret */
   const wallsG = el('g', { class: 'walls' });
-  wallsG.appendChild(el('rect', {
-    x: wall / 2, y: wall / 2, width: BW - wall, height: BH - wall,
-    class: 'wall-ext', 'stroke-width': wall
+  wallsG.appendChild(el('path', {
+    d: outline(wall / 2), class: 'wall-ext', 'stroke-width': wall
   }));
   // muret anësore = mure të përbashkëta me shtëpitë ngjitur (shtëpi në varg)
   wallsG.appendChild(el('rect', { x: 0, y: 0, width: wallParty, height: BH, class: 'wall-party' }));
-  wallsG.appendChild(el('rect', { x: BW - wall, y: 0, width: wall, height: BH, class: 'wall-party' }));
+  wallsG.appendChild(el('rect', {
+    x: BW - wall, y: 0, width: wall, height: rc ? rc.y : BH, class: 'wall-party'
+  }));
   (floor.walls || []).forEach(w =>
     wallsG.appendChild(el('rect', { x: w.x, y: w.y, width: w.w, height: w.h, class: 'wall-int' })));
   svg.appendChild(wallsG);

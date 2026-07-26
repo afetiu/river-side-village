@@ -182,41 +182,9 @@ figcaption{font-family:var(--f-mono);font-size:.71rem;color:var(--ink-3);margin-
 
 /* ---------- planimetria ---------- */
 .plans{padding:clamp(4.5rem,10vw,8rem) 0;background:var(--paper-2)}
-.plans .wrap{max-width:1720px}
-.plan-layout{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1.85fr) minmax(280px,.66fr);
-  gap:clamp(1.4rem,2.4vw,2.4rem);align-items:start}
-
-/* izometria */
-.iso-col{position:sticky;top:92px}
-.iso-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}
-.iso-head h3{font-size:1.06rem;font-weight:800;font-stretch:110%}
-.toggle{display:inline-flex;align-items:center;gap:.5em;background:var(--paper-3);border:0;
-  border-radius:3px;padding:.6em .95em;cursor:pointer;font-family:var(--f-mono);font-size:.66rem;
-  letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);
-  transition:background .3s,color .3s}
-.toggle:hover{background:var(--ink);color:var(--paper)}
-.toggle-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.4;transition:opacity .3s}
-.toggle[aria-pressed="true"]{background:var(--brick);color:var(--white)}
-.toggle[aria-pressed="true"] .toggle-dot{opacity:1}
-.iso-mount{background:var(--paper);border-radius:4px;padding:1.1rem}
-.iso-svg{width:100%;height:auto;max-height:66vh;overflow:visible}
-.iso-note{font-family:var(--f-mono);font-size:.65rem;color:var(--ink-3);margin:.9rem 0 0;text-align:center}
-
-.iso-floor{cursor:pointer;transition:transform .8s var(--ease),opacity .5s var(--ease)}
-.iso-floor .iso-top{stroke:rgba(20,16,13,.3);stroke-width:2;vector-effect:non-scaling-stroke}
-.iso-floor:not(.is-active){opacity:.5}
-.iso-floor:hover{opacity:.85}
-.iso-floor.is-active{opacity:1}
-.iso-floor:focus-visible{outline:none}
-.iso-floor:focus-visible .iso-slab .iso-top{stroke:var(--brick);stroke-width:5}
-.iso-leader{stroke:var(--line);stroke-width:4}
-.iso-label-name{font-family:var(--f-disp);font-weight:800;font-stretch:112%;font-size:104px;
-  letter-spacing:-.04em;fill:var(--ink);
-  paint-order:stroke fill;stroke:var(--paper);stroke-width:16px;stroke-linejoin:round}
-.iso-label-area{font-family:var(--f-mono);font-size:62px;fill:var(--ink-3);
-  paint-order:stroke fill;stroke:var(--paper);stroke-width:14px;stroke-linejoin:round}
-.iso-floor.is-active .iso-label-name{fill:var(--brick)}
-.is-exploded .iso-floor{transform:translateY(calc(var(--i) * -430px))}
+.plans .wrap{max-width:1400px}
+.plan-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,.6fr);
+  gap:clamp(1.6rem,3vw,3rem);align-items:start}
 
 /* skedat e kateve */
 .floor-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.4rem}
@@ -236,16 +204,12 @@ figcaption{font-family:var(--f-mono);font-size:.71rem;color:var(--ink-3);margin-
 
 .plan-stage{background:var(--paper);border-radius:4px;
   padding:clamp(1.2rem,2.6vw,2.6rem);display:flex;justify-content:center}
-/* plani është elementi kryesor — zë tërë gjerësinë e kolonës */
-.plan-svg{display:block;width:100%;max-width:880px;height:auto;color:var(--ink);
+/* plani është elementi kryesor — i madh, por i kufizuar që të mos kërkojë
+   dy ekrane skrollim; paneli anash mbetet sticky ndërsa e shikoni */
+.plan-svg{display:block;width:100%;max-width:780px;max-height:132vh;height:auto;color:var(--ink);
   transition:opacity .55s var(--ease),transform .55s var(--ease)}
 .plan-svg.is-entering{opacity:0;transform:translateY(16px) scale(.985)}
 
-.plan-orig{margin:1rem 0 0;background:var(--paper);border-radius:4px;padding:1.2rem;display:grid;
-  justify-items:center}
-.plan-orig[hidden]{display:none}
-.plan-orig img{max-height:78vh;width:auto;border-radius:3px}
-.plan-orig figcaption{margin-top:.9rem;text-align:center}
 
 /* elementet e planit */
 .slab{fill:var(--white)}
@@ -298,9 +262,6 @@ figcaption{font-family:var(--f-mono);font-size:.71rem;color:var(--ink-3);margin-
 .legend li{display:flex;align-items:center;gap:.45em;font-family:var(--f-mono);
   font-size:.63rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .legend i{width:13px;height:13px;border-radius:2px}
-.orig-link{font-family:var(--f-mono);font-size:.68rem;color:var(--brick);font-weight:500;
-  text-decoration:none;white-space:nowrap;transition:color .3s}
-.orig-link:hover{color:var(--ink)}
 
 /* paneli i dhomës */
 .room-panel{position:sticky;top:92px;background:var(--paper);border-radius:4px;padding:1.6rem}
@@ -393,10 +354,8 @@ figcaption{font-family:var(--f-mono);font-size:.71rem;color:var(--ink-3);margin-
 .foot p{margin:0}
 
 /* ---------- responsive ---------- */
-@media (max-width:1380px){
-  .plan-layout{grid-template-columns:minmax(0,1fr) minmax(260px,.6fr)}
-  .iso-col{grid-column:1 / -1;position:static}
-  .iso-svg{max-height:52vh}
+@media (max-width:1180px){
+  .plan-layout{grid-template-columns:minmax(0,1.6fr) minmax(240px,.7fr)}
 }
 @media (max-width:900px){
   .nav-links{display:none}

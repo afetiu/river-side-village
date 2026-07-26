@@ -12,7 +12,13 @@
     "price": "Me marrëveshje",
     "status": "Në ndërtim",
     "floorToFloor": "3.00 m (2.80 m i lirë + 0.20 m pllakë)",
-    "levels": ["Përdhesa +0.00", "Kati 1 +3.00", "Kati 2 +6.00", "Atika +9.00", "Kulmi +10.00"],
+    "levels": [
+      "Përdhesa +0.00",
+      "Kati 1 +3.00",
+      "Kati 2 +6.00",
+      "Atika +9.00",
+      "Kulmi +10.00"
+    ],
     "atticArea": 51.52,
     "atticNote": "Kulmi i pashfrytëzuar"
   },
@@ -23,12 +29,36 @@
       "level": "+0.00",
       "area": 68.47,
       "rooms": [
-        { "name": "Qëndrimi Ditor + Tryezaria", "area": 24.35, "floor": "Laminat", "perimeter": 1987.48, "kind": "living" },
-        { "name": "Qëndrimi Ditor + Tryezaria", "area": 15.06, "floor": "Laminat", "perimeter": 1699.26, "kind": "dining" },
-        { "name": "Dhomë Gjumi", "area": 11.24, "floor": "Laminat", "perimeter": 1359.09, "kind": "bedroom" },
-        { "name": "Banjo", "area": 3.02, "floor": "Keramik", "perimeter": 704.83, "kind": "bath" },
-        { "name": "Erëmbrojtësi", "area": 4.66, "floor": "Keramik", "perimeter": 1037.00, "kind": "entry" }
-      ]
+        {
+          "name": "Qëndrimi Ditor + Tryezaria",
+          "area": 24.35,
+          "floor": "Laminat",
+          "perimeter": 1987.48,
+          "kind": "living"
+        },
+        {
+          "name": "Qëndrimi Ditor + Tryezaria",
+          "area": 15.06,
+          "floor": "Laminat",
+          "perimeter": 1699.26,
+          "kind": "dining"
+        },
+        {
+          "name": "Dhomë Gjumi",
+          "area": 11.24,
+          "floor": "Laminat",
+          "perimeter": 1359.09,
+          "kind": "bedroom"
+        },
+        {
+          "name": "Banjo",
+          "area": 3.02,
+          "floor": "Keramik",
+          "perimeter": 704.83,
+          "kind": "bath"
+        }
+      ],
+      "note": "Pjesa ballore djathtas është e tërhequr — hyrja është hapësirë e mbuluar jashtë gabaritit të mbyllur."
     },
     {
       "id": "kati1",
@@ -36,13 +66,55 @@
       "level": "+3.00",
       "area": 71.95,
       "rooms": [
-        { "name": "Dhomë Gjumi", "area": 16.28, "floor": "Laminat", "perimeter": 1650.48, "kind": "bedroom" },
-        { "name": "Dhomë Gjumi", "area": 15.30, "floor": "Laminat", "perimeter": 1625.75, "kind": "bedroom" },
-        { "name": "Banjo", "area": 5.37, "floor": "Keramik", "perimeter": 1107.00, "kind": "bath" },
-        { "name": "Koridori", "area": 6.94, "floor": "Laminat", "perimeter": 1455.52, "kind": "corridor" },
-        { "name": "Utiliti", "area": 4.33, "floor": "Keramik", "perimeter": 835.21, "kind": "utility" },
-        { "name": "Ballkoni", "area": 5.12, "floor": "Keramik", "perimeter": 977.75, "kind": "balcony" },
-        { "name": "Ballkoni", "area": 3.39, "floor": "Keramik", "perimeter": 780.00, "kind": "balcony" }
+        {
+          "name": "Dhomë Gjumi",
+          "area": 16.28,
+          "floor": "Laminat",
+          "perimeter": 1650.48,
+          "kind": "bedroom"
+        },
+        {
+          "name": "Dhomë Gjumi",
+          "area": 15.3,
+          "floor": "Laminat",
+          "perimeter": 1625.75,
+          "kind": "bedroom"
+        },
+        {
+          "name": "Banjo",
+          "area": 5.37,
+          "floor": "Keramik",
+          "perimeter": 1107.0,
+          "kind": "bath"
+        },
+        {
+          "name": "Koridori",
+          "area": 6.94,
+          "floor": "Laminat",
+          "perimeter": 1455.52,
+          "kind": "corridor"
+        },
+        {
+          "name": "Utiliti",
+          "area": 4.33,
+          "floor": "Keramik",
+          "perimeter": 835.21,
+          "kind": "utility"
+        },
+        {
+          "name": "Ballkoni",
+          "area": 5.12,
+          "floor": "Keramik",
+          "perimeter": 977.75,
+          "kind": "balcony"
+        },
+        {
+          "name": "Ballkoni",
+          "area": 3.39,
+          "floor": "Keramik",
+          "perimeter": 780.0,
+          "kind": "balcony"
+        }
       ]
     },
     {
@@ -52,14 +124,57 @@
       "area": 63.29,
       "netArea": 56.67,
       "rooms": [
-        { "name": "Dhomë Gjumi", "area": 17.86, "floor": "Laminat", "perimeter": 1889.81, "kind": "bedroom" },
-        { "name": "Dhomë Gjumi", "area": 12.43, "floor": "Laminat", "perimeter": 1417.93, "kind": "bedroom" },
-        { "name": "Banjo", "area": 5.33, "floor": "Keramik", "perimeter": null, "kind": "bath", "inferred": true,
-          "note": "Dhoma nën shkallë me dush – e pa-etiketuar në tabelën e planit, sipërfaqja e llogaritur nga kuotat 226×236" },
-        { "name": "Koridori", "area": 4.33, "floor": "Laminat", "perimeter": 935.71, "kind": "corridor" },
-        { "name": "Utiliti", "area": 4.44, "floor": "Keramik", "perimeter": 845.22, "kind": "utility" },
-        { "name": "Ballkoni", "area": 4.84, "floor": "Keramik", "perimeter": 944.99, "kind": "balcony" },
-        { "name": "Tarraca", "area": 13.24, "floor": "Keramik", "perimeter": 1960.34, "kind": "terrace" }
+        {
+          "name": "Dhomë Gjumi",
+          "area": 17.86,
+          "floor": "Laminat",
+          "perimeter": 1889.81,
+          "kind": "bedroom"
+        },
+        {
+          "name": "Dhomë Gjumi",
+          "area": 12.43,
+          "floor": "Laminat",
+          "perimeter": 1417.93,
+          "kind": "bedroom"
+        },
+        {
+          "name": "Banjo",
+          "area": 5.33,
+          "floor": "Keramik",
+          "perimeter": null,
+          "kind": "bath",
+          "inferred": true,
+          "note": "Dhoma nën shkallë me dush – e pa-etiketuar në tabelën e planit, sipërfaqja e llogaritur nga kuotat 226×236"
+        },
+        {
+          "name": "Koridori",
+          "area": 4.33,
+          "floor": "Laminat",
+          "perimeter": 935.71,
+          "kind": "corridor"
+        },
+        {
+          "name": "Utiliti",
+          "area": 4.44,
+          "floor": "Keramik",
+          "perimeter": 845.22,
+          "kind": "utility"
+        },
+        {
+          "name": "Ballkoni",
+          "area": 4.84,
+          "floor": "Keramik",
+          "perimeter": 944.99,
+          "kind": "balcony"
+        },
+        {
+          "name": "Tarraca",
+          "area": 13.24,
+          "floor": "Keramik",
+          "perimeter": 1960.34,
+          "kind": "terrace"
+        }
       ]
     }
   ],

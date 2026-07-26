@@ -10,7 +10,6 @@ index.html          faqja e vetme
 css/style.css       stilet
 js/floors.js        gjeometria e kateve (cm) — burimi i vetëm i të dhënave
 js/plan.js          gjeneruesi i planeve SVG
-js/iso.js           pamja aksonometrike e shpërndarë
 js/main.js          ndërveprimet
 assets/img/         renderet, fasadat, skanimet e planeve origjinale
 data.json           të dhënat e nxjerra nga projekti i arkitektit

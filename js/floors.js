@@ -38,37 +38,38 @@ export const FLOORS = [
     level: '+0.00',
     area: 68.47,
     perimeter: 3604.74,
-    blurb: 'Hapësira ditore e hapur 555 cm e gjerë dhe 728 cm e thellë, me dritare 460 cm nga oborri. Poshtë saj: dhoma e gjumit 285 × 400, banjo dhe erëmbrojtësi i hyrjes.',
+    blurb: 'Hapësira ditore e hapur 555 cm e gjerë dhe 728 cm e thellë, me dritare 460 cm nga oborri. Poshtë saj dhoma e gjumit 285 × 400 dhe banjoja; hyrja bëhet nën pjesën e tërhequr të fasadës.',
     rooms: [
       { id: 'p-living', name: 'Qëndrimi Ditor', area: 24.35, perimeter: 1987.48, finish: 'Laminat', kind: 'living',   x: 25,  y: 20,   w: 555, h: 391,
         note: 'Pjesë e hapësirës së vetme ditore 555 × 728 cm — pa mur ndarës me tryezarinë.' },
       { id: 'p-dining', name: 'Tryezaria',      area: 15.06, perimeter: 1699.26, finish: 'Laminat', kind: 'dining',   x: 25,  y: 411,  w: 445, h: 337 },
-      { id: 'p-hall',   name: 'Korridor',       area: null,  perimeter: null,    finish: 'Keramik', kind: 'corridor', x: 322, y: 760,  w: 111, h: 220 },
+      { id: 'p-hall',   name: 'Korridor',       area: null,  perimeter: null,    finish: 'Keramik', kind: 'corridor', x: 322, y: 760,  w: 111, h: 205 },
       { id: 'p-bed',    name: 'Dhomë Gjumi',    area: 11.24, perimeter: 1359.09, finish: 'Laminat', kind: 'bedroom',  x: 25,  y: 760,  w: 285, h: 400 },
-      { id: 'p-bath',   name: 'Banjo',          area: 3.02,  perimeter: 704.83,  finish: 'Keramik', kind: 'bath',     x: 433, y: 760,  w: 147, h: 205 },
-      { id: 'p-entry',  name: 'Erëmbrojtësi',   area: 4.66,  perimeter: 1037.00, finish: 'Keramik', kind: 'entry',    x: 322, y: 980,  w: 258, h: 180 }
+      { id: 'p-bath',   name: 'Banjo',          area: 3.02,  perimeter: 704.83,  finish: 'Keramik', kind: 'bath',     x: 433, y: 760,  w: 147, h: 205 }
     ],
     stair: { x: 470, y: 411, w: 110, h: 337, dir: 'up', steps: 16 },
     walls: [
       { x: 25,  y: 748, w: 555, h: 12 },
       { x: 310, y: 760, w: 12,  h: 400 },
-      { x: 421, y: 760, w: 12,  h: 220 },
-      { x: 433, y: 965, w: 147, h: 15 }
+      { x: 421, y: 760, w: 12,  h: 205 },
+      // muri ballor i pjesës së tërhequr — poshtë tij është jashtë
+      { x: 310, y: 965, w: 290, h: 20 }
     ],
     windows: [
       { x: 70,  y: 0,    w: 460, h: 20 },   // 70 | 460 | 70
       { x: 45,  y: 1160, w: 240, h: 20 }    // 45 | 240 | 45 | 273
     ],
     doors: [
-      { x: 400, y: 1160, w: 100, h: 20, type: 'entrance' },
+      { x: 340, y: 965, w: 95, h: 20, type: 'entrance' },
       { hinge: [310, 845], r: 88, a0: 0,   a1: 90  },
-      { hinge: [433, 800], r: 82, a0: 90,  a1: 180 },
-      { hinge: [421, 980], r: 82, a0: 180, a1: 270 }
+      { hinge: [433, 800], r: 82, a0: 90,  a1: 180 }
     ],
     rails: [],
+    /* pjesa ballore djathtas është e tërhequr — hapësirë e mbuluar, jashtë shtëpisë */
+    recess: { x: 310, y: 985, w: 290, h: 195 },
     outside: [
       { x: 0, y: -120, w: 600, h: 120, label: 'Oborr / tarracë' },
-      { x: 330, y: 1180, w: 270, h: 100, label: 'Hyrja' }
+      { x: 310, y: 985, w: 290, h: 195, label: 'Hyrja' }
     ],
     dims: [
       { a: [70, -60],  b: [530, -60],  t: '460', axis: 'x' },
