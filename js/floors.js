@@ -14,16 +14,18 @@ export const BUILDING = {
   clearHeight: 280
 };
 
+/* Ngjyrat janë tone të errëta të të njëjtave nuanca si më parë —
+   vizatimi rri mbi një "dërrasë" të errët që rimon me pllakat e tjera. */
 export const KIND = {
-  living:   { fill: '#EEE2CF', label: 'Hapësirë ditore' },
-  dining:   { fill: '#EEE2CF', label: 'Hapësirë ditore' },
-  bedroom:  { fill: '#E5DED0', label: 'Dhomë gjumi' },
-  bath:     { fill: '#D6E0DF', label: 'Nyje sanitare' },
-  utility:  { fill: '#DEDACF', label: 'Ndihmëse' },
-  corridor: { fill: '#EAE5DA', label: 'Qarkullim' },
-  stair:    { fill: '#E4DDD0', label: 'Shkallë' },
-  balcony:  { fill: '#C7D1CB', label: 'E jashtme' },
-  terrace:  { fill: '#C7D1CB', label: 'E jashtme' }
+  living:   { fill: '#4A3D2A', label: 'Hapësirë ditore' },
+  dining:   { fill: '#4A3D2A', label: 'Hapësirë ditore' },
+  bedroom:  { fill: '#40382C', label: 'Dhomë gjumi' },
+  bath:     { fill: '#31413E', label: 'Nyje sanitare' },
+  utility:  { fill: '#423E2F', label: 'Ndihmëse' },
+  corridor: { fill: '#382F26', label: 'Qarkullim' },
+  stair:    { fill: '#3C342A', label: 'Shkallë' },
+  balcony:  { fill: '#2E3B33', label: 'E jashtme' },
+  terrace:  { fill: '#2E3B33', label: 'E jashtme' }
 };
 
 export const FLOORS = [

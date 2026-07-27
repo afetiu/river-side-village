@@ -99,7 +99,7 @@ export function buildPlan(floor, opts = {}) {
   if (!bare) {
     const defs = el('defs');
     defs.innerHTML = `<filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#2b211a" flood-opacity=".16"/></filter>`;
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity=".45"/></filter>`;
     svg.appendChild(defs);
 
     (floor.outside || []).forEach(o => {
