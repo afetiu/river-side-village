@@ -6,12 +6,7 @@
 
 :root{
   /* ---- ngjyrat ---- */
-  --ink:#171310;
-  --ink-2:#4A3F35;
-  --ink-3:#8A7C6D;
   --paper:#F2EDE4;
-  --paper-2:#E8E1D5;
-  --paper-3:#DAD1C2;
   --white:#FCFAF6;
   --brick:#C4643A;
 
@@ -22,6 +17,11 @@
   --panel:rgba(247,242,234,.055);
   --panel-line:rgba(247,242,234,.11);
   --panel-line-2:rgba(247,242,234,.07);
+
+  /* ---- sipërfaqet e planit (tema e errët) ---- */
+  --plan-slab:#241D17;
+  --plan-slab-2:#2E261F;
+  --plan-halo:rgba(23,18,14,.82);
 
   /* ---- ritmi ---- */
   --s1:6px; --s2:10px; --s3:16px; --s4:24px; --s5:34px;
@@ -155,82 +155,83 @@ button{font:inherit;color:inherit}
 .tel:hover{background:var(--brick);border-color:var(--brick);color:var(--white)}
 
 /* ═══════════ kolona e djathtë — plani ═══════════ */
-.col-right{color:var(--ink);background:var(--paper);border-color:rgba(23,19,16,.1);
+.col-right{
   display:grid;grid-template-rows:auto minmax(0,1fr) auto;
   gap:var(--s3);padding:var(--s3);min-height:0}
 
 .floor-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
-  border-bottom:1px solid var(--paper-3)}
+  border-bottom:1px solid var(--panel-line-2)}
 .floor-tabs button{background:none;border:0;border-bottom:2px solid transparent;
   cursor:pointer;padding:.35rem .5rem .6rem;display:flex;flex-direction:column;gap:.12rem;
-  text-align:left;color:var(--ink-3);
+  text-align:left;color:var(--txt-3);
   transition:color .25s var(--ease),border-color .25s var(--ease)}
-.floor-tabs button:hover{color:var(--ink-2)}
+.floor-tabs button:hover{color:var(--txt-2)}
 .tab-lvl{font-size:.56rem;letter-spacing:.12em}
 .tab-name{font-size:1rem;font-weight:500;letter-spacing:-.02em;
   font-family:var(--f);text-transform:none}
 .tab-area{font-size:.58rem;letter-spacing:.08em}
-.floor-tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brick)}
+.floor-tabs button[aria-selected="true"]{color:var(--txt);border-bottom-color:var(--brick)}
 .floor-tabs button[aria-selected="true"] .tab-name{font-weight:600}
 
 .plan-stage{min-height:0;display:flex;align-items:center;justify-content:center}
-.plan-svg{display:block;max-width:100%;max-height:100%;width:auto;height:auto;color:var(--ink);
+.plan-svg{display:block;max-width:100%;max-height:100%;width:auto;height:auto;color:var(--txt);
   transition:opacity .45s var(--ease),transform .45s var(--ease)}
 .plan-svg.is-entering{opacity:0;transform:translateY(8px) scale(.995)}
 
 .plan-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
-  gap:var(--s2) var(--s3);padding-top:var(--s2);border-top:1px solid var(--paper-3)}
+  gap:var(--s2) var(--s3);padding-top:var(--s2);border-top:1px solid var(--panel-line-2)}
 .rooms-inline{list-style:none;display:flex;flex-wrap:wrap;gap:.25rem .3rem;margin:0;padding:0}
 .rooms-inline li{display:flex;align-items:center;gap:.4em;cursor:pointer;
-  border:1px solid var(--paper-3);border-radius:99px;padding:.2em .6em .2em .45em;
-  font-size:.7rem;color:var(--ink-2);
+  border:1px solid var(--panel-line);border-radius:99px;padding:.2em .6em .2em .45em;
+  font-size:.7rem;color:var(--txt-2);
   transition:background .2s,color .2s,border-color .2s}
-.rooms-inline li:hover{border-color:var(--ink-3)}
-.rooms-inline li.is-sel{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.rl-sw{width:8px;height:8px;border-radius:99px;flex:none}
+.rooms-inline li:hover{border-color:var(--txt-3)}
+.rooms-inline li.is-sel{background:var(--brick);border-color:var(--brick);color:var(--white)}
+.rl-sw{width:8px;height:8px;border-radius:99px;flex:none;
+  box-shadow:inset 0 0 0 1px rgba(241,236,227,.16)}
 .rl-area{font-family:var(--f-mono);font-size:.62rem;opacity:.7}
-.plan-note{margin:0;color:var(--ink-3);opacity:.75}
+.plan-note{margin:0;color:var(--txt-3);opacity:.75}
 
-/* ---------- elementet e planit ---------- */
-.slab{fill:var(--white)}
-.outside-rect{fill:none;stroke:var(--paper-3);stroke-width:3;stroke-dasharray:14 10}
-.outside-label{font-family:var(--f-mono);font-size:25px;fill:var(--ink-3);text-anchor:middle;letter-spacing:.05em}
+/* ---------- elementet e planit — vizatim i çelët mbi dërrasë të errët ---------- */
+.slab{fill:var(--plan-slab)}
+.outside-rect{fill:none;stroke:rgba(241,236,227,.22);stroke-width:3;stroke-dasharray:14 10}
+.outside-label{font-family:var(--f-mono);font-size:25px;fill:var(--txt-3);text-anchor:middle;letter-spacing:.05em}
 .room{cursor:pointer}
 .room-fill{transition:fill .3s var(--ease)}
 .room-hit{fill:transparent;stroke:transparent;stroke-width:0;cursor:pointer;transition:fill .25s,stroke .25s}
-.room:hover .room-hit,.room.is-hot .room-hit{fill:rgba(196,100,58,.15)}
-.room.is-sel .room-hit{fill:rgba(196,100,58,.22);stroke:var(--brick);stroke-width:7}
+.room:hover .room-hit,.room.is-hot .room-hit{fill:rgba(196,100,58,.18)}
+.room.is-sel .room-hit{fill:rgba(196,100,58,.26);stroke:var(--brick);stroke-width:7}
 .room:focus-visible{outline:none}
 .room:focus-visible .room-hit{stroke:var(--brick);stroke-width:7}
 
-.wall-ext{fill:none;stroke:var(--ink)}
-.wall-int{fill:var(--ink)}
-.wall-party{fill:var(--ink);opacity:.86}
-.win-cut,.rail-cut{fill:var(--white)}
-.win-glass{stroke:var(--ink);stroke-width:5}
-.rail-line{stroke:var(--ink-3);stroke-width:4}
-.door-arc{fill:none;stroke:var(--ink-3);stroke-width:3.5}
-.door-leaf-line{stroke:var(--ink);stroke-width:6}
-.door-leaf{fill:var(--white)}
-.f-line{fill:none;stroke:var(--ink-3);stroke-width:3.2;opacity:.5}
-.stair-bg{fill:var(--paper-2)}
-.stair-tread{stroke:var(--ink-3);stroke-width:3}
+.wall-ext{fill:none;stroke:var(--txt)}
+.wall-int{fill:var(--txt)}
+.wall-party{fill:var(--txt);opacity:.86}
+.win-cut,.rail-cut{fill:var(--plan-slab)}
+.win-glass{stroke:var(--txt);stroke-width:5}
+.rail-line{stroke:var(--txt-3);stroke-width:4}
+.door-arc{fill:none;stroke:var(--txt-3);stroke-width:3.5}
+.door-leaf-line{stroke:var(--txt);stroke-width:6}
+.door-leaf{fill:var(--plan-slab)}
+.f-line{fill:none;stroke:var(--txt-3);stroke-width:3.2;opacity:.55}
+.stair-bg{fill:var(--plan-slab-2)}
+.stair-tread{stroke:var(--txt-3);stroke-width:3}
 .stair-arrow{stroke:var(--brick);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-.room-name,.room-area{paint-order:stroke fill;stroke:var(--white);stroke-width:7px;
+.room-name,.room-area{paint-order:stroke fill;stroke:var(--plan-halo);stroke-width:7px;
   stroke-linejoin:round;text-anchor:middle;pointer-events:none}
-.room-name{font-family:var(--f);font-weight:500;fill:var(--ink);letter-spacing:-.01em}
-.room-area{font-family:var(--f-mono);fill:var(--ink-3)}
+.room-name{font-family:var(--f);font-weight:500;fill:var(--txt);letter-spacing:-.01em}
+.room-area{font-family:var(--f-mono);fill:var(--txt-2)}
 
-.dim-line,.dim-tick{stroke:var(--ink-3);stroke-width:2.5}
-.dim-text{font-family:var(--f-mono);font-size:27px;fill:var(--ink-3);text-anchor:middle}
+.dim-line,.dim-tick{stroke:var(--txt-3);stroke-width:2.5}
+.dim-text{font-family:var(--f-mono);font-size:27px;fill:var(--txt-3);text-anchor:middle}
 .dim-line-in{stroke:var(--brick);stroke-width:2.5;stroke-dasharray:10 7;opacity:.8}
 .dim-text-in{font-family:var(--f-mono);font-size:23px;fill:var(--brick);text-anchor:middle;
-  paint-order:stroke fill;stroke:var(--white);stroke-width:7px;stroke-linejoin:round}
+  paint-order:stroke fill;stroke:var(--plan-halo);stroke-width:7px;stroke-linejoin:round}
 .cap-name{font-family:var(--f);font-weight:500;font-size:42px;
-  letter-spacing:-.01em;fill:var(--ink)}
-.cap-area{font-family:var(--f-mono);font-size:25px;fill:var(--ink-3);text-anchor:end}
-.cap-rule{stroke:var(--paper-3);stroke-width:3}
+  letter-spacing:-.01em;fill:var(--txt)}
+.cap-area{font-family:var(--f-mono);font-size:25px;fill:var(--txt-3);text-anchor:end}
+.cap-rule{stroke:var(--panel-line);stroke-width:3}
 
 /* ---------- harta ---------- */
 .site-pin{position:relative}
