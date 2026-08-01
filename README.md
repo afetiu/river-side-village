@@ -107,19 +107,30 @@ vetëm një orë sepse s'kanë hash në emër.
 ### DNS
 
 Domeni duhet të jetë zonë në Cloudflare që apex-i të funksionojë (GoDaddy
-nuk lejon CNAME te apex-i):
+nuk lejon CNAME te apex-i; Cloudflare e zgjidh me *CNAME flattening*).
 
-1. dash.cloudflare.com → *Add a site* → `riversidevilla7.com` → plani Free
-2. Cloudflare jep dy nameserver-a; vendosi te GoDaddy → *My Products* →
-   *DNS* → *Nameservers* → *Change* → *I'll use my own nameservers*
-3. Pasi zona të aktivizohet, lidh domenin me projektin:
-   ```bash
-   npx wrangler pages domain add riversidevilla7.com --project-name=river-side-villa-7
-   npx wrangler pages domain add www.riversidevilla7.com --project-name=river-side-villa-7
-   ```
+Gjendja (2026-08-01) — gjithçka në anën e Cloudflare është bërë:
 
-Certifikata dhe rekordet i vendos vetë Cloudflare. Propagimi i
-nameserver-ave zgjat zakonisht disa orë.
+- zona `riversidevilla7.com` është krijuar, statusi **pending**
+- te projekti janë lidhur `riversidevilla7.com` dhe `www.riversidevilla7.com`
+- rekordet ekzistojnë te zona, të dyja të proxy-uara:
+
+  | Tipi | Emri | Vlera |
+  |---|---|---|
+  | CNAME | `riversidevilla7.com` | `river-side-villa-7.pages.dev` |
+  | CNAME | `www` | `river-side-villa-7.pages.dev` |
+
+Mbetet **një hap i vetëm**, te GoDaddy — *My Products* → domeni → *DNS* →
+*Nameservers* → *Change* → *I'll use my own nameservers*:
+
+```
+boyd.ns.cloudflare.com
+cora.ns.cloudflare.com
+```
+
+Pas kësaj zona aktivizohet vetë (zakonisht 1–24 orë) dhe certifikata vjen
+menjëherë pas saj. Asgjë tjetër nuk duhet prekur — domeni s'ka MX as TXT,
+vetëm faqen e parkimit të GoDaddy-t, prandaj asnjë email nuk prishet.
 
 ## Burimi
 
