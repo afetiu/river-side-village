@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- Vegël njëpërdorimshe: gjen kutinë e vizatimit në PNG-të origjinale
+     (src-images/plans/), i pret të treja me të njëjtën kornizë që katet të
+     mbeten të përpikta mbi njëri-tjetrin, dhe i rikodon në WebP.
+
+     Përdorimi:
+       npx http-server . -p 8899 -c-1
+       msedge --headless --dump-dom http://127.0.0.1:8899/tools/encode.html
+     Dalja: rreshta "emri<TAB>data:image/webp;base64,…" të cilat
+     tools/write-plans.js i shkruan në assets/plans/.                      -->
+<meta charset="utf-8">
+<title>encode</title>
+<pre id="out">…</pre>
+<script>
+const FILES = ['perdhesa', 'kati1', 'kati2'];
+const Q = 0.93;
+const INSET = 70;   // shpërfill kornizën dekorative të fletës
+const INK = 215;    // sa e errët duhet të jetë një piksel që të quhet vizatim
+const PAD = 26;     // frymëmarrje rreth vizatimit
+
+const load = src => new Promise((res, rej) => {
+  const i = new Image();
+  i.onload = () => res(i);
+  i.onerror = () => rej(new Error('nuk u ngarkua ' + src));
+  i.src = src;
+});
+
+/** Kutia e pikselave "me bojë", brenda një inseti që lë jashtë kornizën. */
+function inkBox(g, w, h) {
+  const d = g.getImageData(0, 0, w, h).data;
+  let x0 = w, y0 = h, x1 = 0, y1 = 0;
+  for (let y = INSET; y < h - INSET; y++) {
+    for (let x = INSET; x < w - INSET; x++) {
+      const i = (y * w + x) * 4;
+      const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      if (lum > INK) continue;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+    }
+  }
+  return { x0, y0, x1, y1 };
+}
+
+(async () => {
+  const imgs = {};
+  const box = { x0: 1e9, y0: 1e9, x1: 0, y1: 0 };
+
+  for (const name of FILES) {
+    const img = await load('../src-images/plans/' + name + '.png');
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    c.getContext('2d', { willReadFrequently: true }).drawImage(img, 0, 0);
+    imgs[name] = c;
+    const b = inkBox(c.getContext('2d'), c.width, c.height);
+    box.x0 = Math.min(box.x0, b.x0); box.y0 = Math.min(box.y0, b.y0);
+    box.x1 = Math.max(box.x1, b.x1); box.y1 = Math.max(box.y1, b.y1);
+  }
+
+  const src = imgs[FILES[0]];
+  const x = Math.max(0, box.x0 - PAD), y = Math.max(0, box.y0 - PAD);
+  const w = Math.min(src.width - x, box.x1 - box.x0 + PAD * 2);
+  const h = Math.min(src.height - y, box.y1 - box.y0 + PAD * 2);
+
+  const out = ['# kutia e përbashkët ' + [x, y, w, h].join(' ')];
+  for (const name of FILES) {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    g.fillStyle = '#fefefe'; g.fillRect(0, 0, w, h);
+    g.drawImage(imgs[name], x, y, w, h, 0, 0, w, h);
+    out.push(name + '\t' + c.toDataURL('image/webp', Q));
+  }
+  document.getElementById('out').textContent = out.join('\n');
+  document.title = 'done';
+})().catch(e => { document.getElementById('out').textContent = 'ERROR ' + e.message; });
+</script>

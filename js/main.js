@@ -1,83 +1,71 @@
-import { FLOORS, KIND } from './floors.js';
-import { buildPlan } from './plan.js';
-
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
-const fmt = n => n.toFixed(2).replace('.', ',');
 
-const stage = $('#plan-stage');
-let current = null;
-
-/* ---------- përzgjedhja e dhomës ---------- */
-
-function select(id) {
-  $$('.plan-svg .room').forEach(r => r.classList.toggle('is-sel', r.dataset.room === id));
-  $$('.rooms-inline li').forEach(li => li.classList.toggle('is-sel', li.dataset.room === id));
+/* ---------------------------------------------------------------
+   Dy shtresa <img> që shkëmbehen: fotoja e re ngarkohet e padukshme
+   dhe shfaqet vetëm kur është gati, kështu nuk ka pulsim.
+   --------------------------------------------------------------- */
+function fader(a, b) {
+  let front = a, back = b;
+  return src => {
+    if (!src || front.getAttribute('src') === src) return;
+    const swap = () => {
+      back.classList.add('is-on');
+      front.classList.remove('is-on');
+      [front, back] = [back, front];
+    };
+    back.src = src;
+    if (back.complete) swap(); else back.addEventListener('load', swap, { once: true });
+  };
 }
 
-function highlight(id, on) {
-  const g = stage.querySelector(`.room[data-room="${id}"]`);
-  if (g) g.classList.toggle('is-hot', on);
+/* ---------- planet e kateve ---------- */
+
+const setPlan = fader($('#plan-a'), $('#plan-b'));
+const tabs = $$('.floor-tabs button');
+let floor = tabs[0];
+
+function setFloor(btn) {
+  if (!btn) return;
+  floor = btn;
+  tabs.forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+  setPlan(btn.dataset.plan);
+  $('#plan-a').alt = $('#plan-b').alt = `Planimetria — ${btn.dataset.name}`;
 }
 
-/* ---------- lista e dhomave nën plan ---------- */
+tabs.forEach(b => b.addEventListener('click', () => setFloor(b)));
 
-function renderRoomList(floor) {
-  const ul = $('#rp-rooms');
-  ul.innerHTML = '';
-  floor.rooms.filter(r => r.area).forEach(r => {
-    const li = document.createElement('li');
-    li.dataset.room = r.id;
-    li.title = `${r.name} · ${r.finish} · perimetri ${r.perimeter ? (r.perimeter / 100).toFixed(2).replace('.', ',') + ' m' : '—'}`;
-    li.innerHTML = `<span class="rl-sw" style="background:${KIND[r.kind].fill}"></span>` +
-      `<span>${r.name}</span><span class="rl-area">${fmt(r.area)} m²</span>`;
-    li.addEventListener('click', () => select(r.id));
-    li.addEventListener('mouseenter', () => highlight(r.id, true));
-    li.addEventListener('mouseleave', () => highlight(r.id, false));
-    ul.appendChild(li);
-  });
-}
-
-/* ---------- ndërrimi i katit ---------- */
-
-function setFloor(id) {
-  const floor = FLOORS.find(f => f.id === id);
-  if (!floor || (floor === current && stage.firstChild)) return;
-  current = floor;
-
-  $$('.floor-tabs button').forEach(b =>
-    b.setAttribute('aria-selected', String(b.dataset.tab === id)));
-
-  const svg = buildPlan(floor);
-  svg.classList.add('is-entering');
-  stage.replaceChildren(svg);
-  requestAnimationFrame(() => svg.classList.remove('is-entering'));
-
-  svg.querySelectorAll('.room').forEach(g => {
-    const room = floor.rooms.find(r => r.id === g.dataset.room);
-    g.addEventListener('click', () => select(room.id));
-    g.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(room.id); }
-    });
-  });
-
-  renderRoomList(floor);
-}
-
-setFloor('perdhesa');
-$$('.floor-tabs button').forEach(b =>
-  b.addEventListener('click', () => setFloor(b.dataset.tab)));
+/* katet e tjerë ngarkohen në heshtje, që ndërrimi të jetë i menjëhershëm */
+addEventListener('load', () => tabs.forEach(b => { new Image().src = b.dataset.plan; }));
 
 /* shigjetat majtas/djathtas mes kateve */
 document.addEventListener('keydown', e => {
   if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
   if ($('#lb').hidden === false) return;
-  const i = FLOORS.indexOf(current);
-  const n = e.key === 'ArrowRight' ? i + 1 : i - 1;
-  if (FLOORS[n]) setFloor(FLOORS[n].id);
+  const i = tabs.indexOf(floor);
+  setFloor(tabs[e.key === 'ArrowRight' ? i + 1 : i - 1]);
 });
 
-/* ---------- harta ---------- */
+/* ---------- pamjet ---------- */
+
+const setShot = fader($('#gal-a'), $('#gal-b'));
+const setBg = fader($('#bg-a'), $('#bg-b'));
+const cap = $('#shot-cap');
+let shot = $('#thumbs button.is-on');
+
+function pick(btn) {
+  if (!btn) return;
+  shot = btn;
+  $$('#thumbs button').forEach(b => b.classList.toggle('is-on', b === btn));
+  setShot(btn.dataset.img);
+  setBg(btn.dataset.sm);          // sfondi merr variantin e vogël — është i turbullt gjithsesi
+  cap.textContent = btn.dataset.cap;
+  $('#gal-a').alt = $('#gal-b').alt = btn.dataset.cap;
+}
+
+$$('#thumbs button').forEach(b => b.addEventListener('click', () => pick(b)));
+
+/* ---------- harta — shenjë vendi, jo hartë për t'u shfletuar ---------- */
 
 const SITE = [42.356054, 20.832722];
 
@@ -86,8 +74,10 @@ const SITE = [42.356054, 20.832722];
   if (!mount || typeof L === 'undefined') return;
 
   const map = L.map(mount, {
-    center: SITE, zoom: 16, scrollWheelZoom: false,
-    zoomControl: true, attributionControl: true
+    center: SITE, zoom: 15,
+    zoomControl: false, attributionControl: true,
+    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+    boxZoom: false, keyboard: false, touchZoom: false, tap: false
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -99,41 +89,30 @@ const SITE = [42.356054, 20.832722];
     icon: L.divIcon({
       className: 'site-pin',
       html: '<span class="pin-ring"></span><span class="pin-dot"></span>',
-      iconSize: [28, 28], iconAnchor: [14, 14]
+      iconSize: [26, 26], iconAnchor: [13, 13]
     }),
     title: 'River Side — Village, Nr. 7'
-  }).addTo(map).bindPopup('<strong>River Side — Village</strong><br>Modeli 2 · Nr. 7');
-
-  map.on('click', () => map.scrollWheelZoom.enable());
-  map.on('mouseout', () => map.scrollWheelZoom.disable());
+  }).addTo(map);
 
   // harta rifreskon përmasat kur ndryshon dritarja
   new ResizeObserver(() => map.invalidateSize()).observe(mount);
 })();
 
-/* koordinatat me një klikim */
-$('#coords')?.addEventListener('click', async e => {
-  const t = e.currentTarget, txt = SITE.join(', ');
-  try { await navigator.clipboard.writeText(txt); t.textContent = 'U kopjua ✓'; }
-  catch { /* pa clipboard — lëri koordinatat siç janë */ }
-  setTimeout(() => { t.textContent = txt; }, 1800);
-});
-
-/* ---------- lightbox i pamjeve ---------- */
+/* ---------- lightbox ---------- */
 
 const lb = $('#lb'), lbImg = $('#lb-img'), lbCap = $('#lb-cap');
 
-function openLb(src, cap, alt) {
-  lbImg.src = src; lbImg.alt = alt || cap || '';
-  lbCap.textContent = cap || '';
+function openLb(src, caption) {
+  lbImg.src = src; lbImg.alt = caption || '';
+  lbCap.textContent = caption || '';
   lb.hidden = false;
   $('#lb-close').focus();
 }
 function closeLb() { lb.hidden = true; lbImg.src = ''; }
 
-$$('#shots button').forEach(b =>
-  b.addEventListener('click', () =>
-    openLb(b.dataset.img, b.dataset.cap, b.querySelector('img')?.alt)));
+$('#gallery').addEventListener('click', () => openLb(shot.dataset.img, shot.dataset.cap));
+$('#plan-sheet').addEventListener('click', () =>
+  openLb(floor.dataset.plan, `Planimetria — ${floor.dataset.name}`));
 
 $('#lb-close').addEventListener('click', closeLb);
 lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });

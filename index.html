@@ -6,10 +6,10 @@
 <title>River Side Village — Modeli 2 — Nr. 7 | Shtëpi në varg P+2, 203,71 m²</title>
 <meta name="description" content="River Side Village, Modeli 2, Nr. 7 — shtëpi e re në varg, P+2, 203,71 m² bruto: 5 dhoma gjumi, 3 banjo, 3 ballkone dhe tarracë. Planimetri e detajuar për çdo kat. Çmimi me marrëveshje.">
 <meta property="og:title" content="River Side Village — Modeli 2 — Nr. 7">
-<meta property="og:description" content="Shtëpi e re në ndërtim: 203,71 m² bruto, 5 dhoma gjumi, 3 banjo, tarracë. Planimetri interaktive për çdo kat.">
-<meta property="og:image" content="assets/img/hero.jpg">
+<meta property="og:description" content="Shtëpi e re në ndërtim: 203,71 m² bruto, 5 dhoma gjumi, 3 banjo, tarracë. Planimetri për çdo kat.">
+<meta property="og:image" content="assets/img/fasada.jpg">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#14100D">
+<meta name="theme-color" content="#F3EEE5">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,10 +40,11 @@
 </head>
 <body>
 
+<!-- sfondi ndjek pamjen e zgjedhur — dy shtresa që shkrihen mes vete -->
 <div class="bg" aria-hidden="true">
-  <img src="assets/img/hero.jpg"
-       srcset="assets/img/hero-sm.jpg 900w, assets/img/hero.jpg 1672w"
-       sizes="100vw" alt="" width="1672" height="941" fetchpriority="high">
+  <img class="bg-img is-on" id="bg-a" src="assets/img/fasada-sm.jpg" alt=""
+       width="900" height="507" fetchpriority="high">
+  <img class="bg-img" id="bg-b" alt="" width="900" height="507">
 </div>
 
 <header class="topbar">
@@ -57,7 +58,7 @@
 
 <main class="stage">
 
-  <!-- ═══════════ MAJTAS — identiteti, faktet, harta, kontakti ═══════════ -->
+  <!-- ═══════════ MAJTAS — identiteti, faktet, pamjet ═══════════ -->
   <section class="col-left">
 
     <div class="intro">
@@ -77,59 +78,69 @@
       <div><dt>Çmimi</dt><dd class="price">Me marrëveshje</dd></div>
     </dl>
 
-    <div class="tiles">
-      <!-- harta -->
-      <div class="tile tile-map">
-        <div class="tile-head">
-          <h2>Vendndodhja</h2>
-          <a class="mini-link" href="https://www.google.com/maps/search/?api=1&amp;query=42.356054,20.832722"
-             target="_blank" rel="noopener">Hape ↗</a>
-        </div>
+    <!-- pamja e madhe, pa kornizë, e shkrirë në faqe -->
+    <figure class="gallery" id="gallery">
+      <img class="gal-img is-on" id="gal-a" src="assets/img/fasada.jpg"
+           alt="Fasada ballore e shtëpisë Nr. 7" width="1670" height="941">
+      <img class="gal-img" id="gal-b" alt="" aria-hidden="true" width="1670" height="941">
+      <button class="gal-zoom" id="gal-zoom" type="button" aria-label="Zmadho pamjen">Zmadho ↗</button>
+    </figure>
+
+    <!-- shirit i ulët: pamjet e vogla · titulli · harta · kontakti -->
+    <div class="strip">
+      <ul class="thumbs" id="thumbs">
+        <li><button type="button" class="is-on"
+                    data-img="assets/img/fasada.jpg" data-sm="assets/img/fasada-sm.jpg"
+                    data-cap="Fasada ballore">
+          <img src="assets/img/fasada-sm.jpg" alt="Fasada ballore" loading="lazy"></button></li>
+        <li><button type="button"
+                    data-img="assets/img/hero.jpg" data-sm="assets/img/hero-sm.jpg"
+                    data-cap="Rruga e kompleksit">
+          <img src="assets/img/hero-sm.jpg" alt="Rruga e kompleksit" loading="lazy"></button></li>
+      </ul>
+
+      <p class="shot-cap" id="shot-cap">Fasada ballore</p>
+
+      <div class="map-tile">
         <div class="map-mount" id="map-mount"></div>
-        <p class="coords" id="coords">42.356054, 20.832722</p>
+        <a class="map-open"
+           href="https://www.google.com/maps/search/?api=1&amp;query=42.356054,20.832722"
+           target="_blank" rel="noopener" title="42.356054, 20.832722">Vendndodhja ↗</a>
       </div>
 
-      <!-- pamjet + kontakti -->
-      <div class="tile tile-side">
-        <div class="tile-head"><h2>Pamjet</h2></div>
-        <ul class="shots" id="shots">
-          <li><button type="button" data-img="assets/img/fasada.jpg" data-cap="Fasada ballore">
-            <img src="assets/img/fasada-sm.jpg" alt="Fasada ballore" loading="lazy"></button></li>
-          <li><button type="button" data-img="assets/img/hero.jpg" data-cap="Rruga e kompleksit">
-            <img src="assets/img/hero-sm.jpg" alt="Rruga e kompleksit" loading="lazy"></button></li>
-        </ul>
-
-        <div class="contact">
-          <p class="contact-lbl">Kontakti</p>
-          <a class="tel" href="tel:+38344202245">+383 44 202 245</a>
-          <a class="tel" href="tel:+38349462482">+383 49 462 482</a>
-        </div>
+      <div class="contact">
+        <a class="tel" href="tel:+38344202245">+383 44 202 245</a>
+        <a class="tel" href="tel:+38349462482">+383 49 462 482</a>
       </div>
     </div>
   </section>
 
   <!-- ═══════════ DJATHTAS — planimetria ═══════════ -->
   <section class="col-right" id="planimetria">
-    <div class="plan-head">
-      <div class="floor-tabs" role="tablist" aria-label="Zgjidh katin">
-        <button role="tab" data-tab="perdhesa" aria-selected="true">
-          <span class="tab-lvl">+0.00</span><span class="tab-name">Përdhesa</span><span class="tab-area">68,47 m²</span>
-        </button>
-        <button role="tab" data-tab="kati1" aria-selected="false">
-          <span class="tab-lvl">+3.00</span><span class="tab-name">Kati 1</span><span class="tab-area">71,95 m²</span>
-        </button>
-        <button role="tab" data-tab="kati2" aria-selected="false">
-          <span class="tab-lvl">+6.00</span><span class="tab-name">Kati 2</span><span class="tab-area">63,29 m²</span>
-        </button>
-      </div>
+    <div class="floor-tabs" role="tablist" aria-label="Zgjidh katin">
+      <button role="tab" data-tab="perdhesa" aria-selected="true"
+              data-plan="assets/plans/perdhesa.webp" data-name="Përdhesa">
+        <span class="tab-lvl">+0.00</span><span class="tab-name">Përdhesa</span><span class="tab-area">68,47 m²</span>
+      </button>
+      <button role="tab" data-tab="kati1" aria-selected="false"
+              data-plan="assets/plans/kati1.webp" data-name="Kati 1">
+        <span class="tab-lvl">+3.00</span><span class="tab-name">Kati 1</span><span class="tab-area">71,95 m²</span>
+      </button>
+      <button role="tab" data-tab="kati2" aria-selected="false"
+              data-plan="assets/plans/kati2.webp" data-name="Kati 2">
+        <span class="tab-lvl">+6.00</span><span class="tab-name">Kati 2</span><span class="tab-area">63,29 m²</span>
+      </button>
     </div>
 
-    <div class="plan-stage" id="plan-stage"></div>
+    <!-- planet e arkitektit — dy shtresa që shkrihen kur ndërrohet kati -->
+    <figure class="plan-sheet" id="plan-sheet">
+      <img class="plan-img is-on" id="plan-a" src="assets/plans/perdhesa.webp"
+           alt="Planimetria e përdhesës" width="705" height="1375">
+      <img class="plan-img" id="plan-b" alt="" aria-hidden="true" width="705" height="1375">
+      <button class="plan-zoom" id="plan-zoom" type="button" aria-label="Zmadho planin">Zmadho ↗</button>
+    </figure>
 
-    <div class="plan-foot">
-      <ul class="rooms-inline" id="rp-rooms"></ul>
-      <p class="plan-note">Përmasat sipas projektit zbatues të NITI Construction.</p>
-    </div>
+    <p class="plan-note">Planet e projektit zbatues · NITI Construction</p>
   </section>
 
 </main>
@@ -140,7 +151,7 @@
   <a href="tel:+38349462482">+383 49 462 482</a>
 </nav>
 
-<!-- lightbox për pamjet -->
+<!-- lightbox për pamjet dhe planet -->
 <div class="lb" id="lb" hidden>
   <button class="lb-close" id="lb-close" aria-label="Mbyll">✕</button>
   <figure><img id="lb-img" src="" alt=""><figcaption id="lb-cap"></figcaption></figure>

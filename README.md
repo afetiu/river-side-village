@@ -3,27 +3,55 @@
 Faqe prezantimi për shitjen e një shtëpie në varg (P+2, 203,71 m² bruto) në
 kompleksin *River Side — Village*. Statike, pa build-step, e strehuar në GitHub Pages.
 
+Një pamje e vetme: majtas identiteti, faktet dhe fotot; djathtas planet e
+arkitektit. Paleta është marrë nga vetë planet — letër krem, bojë e ngrohtë,
+theks tulle.
+
 ## Struktura
 
 ```
 index.html          faqja e vetme
-css/style.css       stilet
-js/floors.js        gjeometria e kateve (cm) — burimi i vetëm i të dhënave
-js/plan.js          gjeneruesi i planeve SVG
-js/main.js          ndërveprimet
-assets/img/         renderet, fasadat, skanimet e planeve origjinale
-data.json           të dhënat e nxjerra nga projekti i arkitektit
+css/style.css       stilet dhe paleta (te :root)
+js/main.js          ndërrimi i kateve, pamjet, harta, lightbox
+assets/plans/*.webp planet e kateve — përdhesa, kati1, kati2
+assets/img/         renderet dhe fasadat
+data.json           të dhënat e nxjerra nga projekti i arkitektit (referencë)
+src-images/         origjinalet me rezolucion të plotë — jashtë git-it
 ```
 
 ## Si të ndryshoj përmbajtjen
 
-**Sipërfaqet dhe dhomat** — `js/floors.js`. Çdo dhomë ka `area` (m², zyrtare
-sipas projektit), `perimeter` (cm), `finish` dhe kutinë `x/y/w/h` në centimetra.
-Origjina është këndi i sipërm i majtë i gabaritit 600 × 1180 cm; ana e poshtme
-e planit është fasada ballore.
+**Planet** — janë figura, jo vizatime të gjeneruara. Skedarët `.webp` te
+`assets/plans/`. Për t'i zëvendësuar shih *Planet* më poshtë.
 
-**Kontakti** — në `index.html`, seksioni `#kontakt`. Numrat janë te
-`href="tel:..."` (pa hapësira) dhe teksti i butonit veçmas.
+**Sipërfaqet e kateve** — te skedat në `index.html`, seksioni `.floor-tabs`
+(`tab-lvl`, `tab-name`, `tab-area`). Sipërfaqet brenda dhomave janë pjesë e
+vetë figurave.
+
+**Kontakti** — në `index.html`, te `.contact` dhe te `.callbar` (shiriti i
+celularit). Numrat janë te `href="tel:..."` (pa hapësira) dhe teksti veçmas.
+
+**Ngjyrat** — të gjitha te `:root` në `css/style.css`.
+
+## Planet
+
+Origjinalet PNG rrinë te `src-images/plans/` (jashtë git-it, si fotot e tjera
+me rezolucion të plotë). Ato kanë hapësirë të bardhë rreth vizatimit, prandaj
+priten dhe rikodohen përpara se të shkojnë në web:
+
+```bash
+npx http-server . -p 8899 -c-1
+msedge --headless --dump-dom http://127.0.0.1:8899/tools/encode.html > dom.txt
+node tools/write-plans.js dom.txt
+```
+
+`tools/encode.html` gjen kutinë e vizatimit në të tri planet, merr bashkimin e
+tyre dhe i pret të treja me të njëjtën kornizë — kështu katet mbeten të
+përpikta mbi njëri-tjetrin kur ndërrohet skeda. Rezultati: ≈85 KB për kat në
+vend të ≈1,3 MB.
+
+Nëse ndryshon korniza, përditëso `width`/`height` te `<img class="plan-img">`
+në `index.html` dhe `aspect-ratio` te `.plan-sheet` në celular.
 
 ## Google Analytics
 
@@ -47,7 +75,7 @@ e jashtme, asnjë cookie.
 npx http-server . -p 8899 -c-1
 ```
 
-Duhet server (jo `file://`) sepse skriptat janë module ES.
+Duhet server (jo `file://`) sepse skripti është modul ES.
 
 ## Domeni
 
@@ -61,5 +89,4 @@ Pas blerjes së domenit:
 
 ## Burimi
 
-Projekti arkitektonik: **NITI Construction**. Planet në faqe janë vizatime
-ilustruese të ndërtuara mbi kuotat dhe sipërfaqet e projektit zbatues.
+Projekti arkitektonik dhe planet: **NITI Construction**.
