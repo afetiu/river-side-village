@@ -11,8 +11,16 @@ const OUT = path.join(ROOT, 'dist');
 
 const SHIP = ['index.html', '_headers', 'css', 'js', 'assets'];
 
-fs.rmSync(OUT, { recursive: true, force: true });
-fs.mkdirSync(OUT, { recursive: true });
+/* Zbraz dist/ pa e fshirë vetë dosjen: në Windows, nëse një server lokal
+   ose shfletues e mban dosjen hapur, rmSync mbi të dështon me EPERM —
+   ndërsa fshirja e përmbajtjes brenda saj kalon pa problem. */
+if (fs.existsSync(OUT)) {
+  for (const e of fs.readdirSync(OUT)) {
+    fs.rmSync(path.join(OUT, e), { recursive: true, force: true });
+  }
+} else {
+  fs.mkdirSync(OUT, { recursive: true });
+}
 
 let files = 0, bytes = 0;
 for (const entry of SHIP) {

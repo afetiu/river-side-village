@@ -266,15 +266,23 @@ button{font:inherit;color:inherit}
   .intro{order:1}
   .facts{order:2}
   .gallery{order:3;aspect-ratio:16/10;min-height:190px}
-  .col-right{order:4;min-height:auto;grid-template-rows:auto auto auto}
-  .strip{order:5;grid-template-columns:1fr;height:auto;gap:var(--s3)}
+  /* shiriti shpërbëhet që fotot e vogla të rrinë menjëherë nën foton e madhe —
+     përndryshe plani i katit futet mes tyre dhe ato duken të shkëputura */
+  .strip{display:contents}
+  .col-right{order:6;min-height:auto;grid-template-rows:auto auto auto}
 
-  .gal-zoom,.plan-zoom{opacity:1;transform:none}
-  .thumbs{height:auto;display:grid;grid-template-columns:repeat(2,1fr)}
+  /* asnjë zmadhim në celular — fshihet edhe ftesa, që të mos premtojë asgjë */
+  .gal-zoom,.plan-zoom{display:none}
+  .gallery,.plan-sheet{cursor:default}
+  .thumbs{order:4;height:auto;display:grid;grid-template-columns:repeat(2,1fr);
+    /* fotoja e madhe dhe të voglat janë një njësi — hapësirë më e ngushtë se ritmi i faqes */
+    margin-top:calc(var(--s2) - var(--s4))}
   .thumbs li{height:auto}
   .thumbs button{height:auto;width:100%;aspect-ratio:16/9}
-  .shot-cap{display:block;text-align:center;justify-self:stretch}
-  .map-tile{display:block;height:auto;aspect-ratio:16/9;width:100%}
+  /* me .strip të shpërbërë këta bëhen fëmijë të .stage — pa order do të binin
+     në krye të faqes, sepse order-i i parazgjedhur është 0 */
+  .shot-cap{order:5;display:block;text-align:center;justify-self:stretch}
+  .map-tile{order:7;display:block;height:auto;aspect-ratio:16/9;width:100%}
   .contact{display:none}
   .callbar{display:grid}
 

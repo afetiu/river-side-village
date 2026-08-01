@@ -3,3 +3,6 @@ src-images/
 
 # dosja e ndertimit per Cloudflare Pages
 dist/
+
+# artefaktet e rishikimit (lavish)
+.lavish/

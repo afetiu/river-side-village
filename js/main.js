@@ -110,9 +110,18 @@ function openLb(src, caption) {
 }
 function closeLb() { lb.hidden = true; lbImg.src = ''; }
 
-$('#gallery').addEventListener('click', () => openLb(shot.dataset.img, shot.dataset.cap));
-$('#plan-sheet').addEventListener('click', () =>
-  openLb(floor.dataset.plan, `Planimetria — ${floor.dataset.name}`));
+/* Në celular fotot nuk hapen fare — zmadhimi aty nuk sjell asgjë, sepse
+   fotoja e madhe e mbush tashmë ekranin. I njëjti prag si te style.css. */
+const small = matchMedia('(max-width:900px), (max-height:560px)');
+
+$('#gallery').addEventListener('click', () => {
+  if (small.matches) return;
+  openLb(shot.dataset.img, shot.dataset.cap);
+});
+$('#plan-sheet').addEventListener('click', () => {
+  if (small.matches) return;
+  openLb(floor.dataset.plan, `Planimetria — ${floor.dataset.name}`);
+});
 
 $('#lb-close').addEventListener('click', closeLb);
 lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
