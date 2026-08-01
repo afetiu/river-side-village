@@ -1,7 +1,8 @@
 # River Side — Village · Modeli i Shtëpisë 2
 
 Faqe prezantimi për shitjen e një shtëpie në varg (P+2, 203,71 m² bruto) në
-kompleksin *River Side — Village*. Statike, pa build-step, e strehuar në GitHub Pages.
+kompleksin *River Side — Village*. Statike, pa build-step, e strehuar në
+Cloudflare Pages — **https://river-side-villa-7.pages.dev**
 
 Një pamje e vetme: majtas identiteti, faktet dhe fotot; djathtas planet e
 arkitektit. Paleta është marrë nga vetë planet — letër krem, bojë e ngrohtë,
@@ -79,8 +80,9 @@ Duhet server (jo `file://`) sepse skripti është modul ES.
 
 ## Deploy — Cloudflare Pages
 
-Domeni: **riversidevilla7.com** (i regjistruar te GoDaddy).
-Projekti në Cloudflare: `river-side-villa-7`.
+Projekti në Cloudflare: `river-side-villa-7` → https://river-side-villa-7.pages.dev
+Account ID: `c31ddd9157887b4dee99ebfcc3221f8b`
+Domeni: **riversidevilla7.com** (i regjistruar te GoDaddy, ende jo i lidhur).
 
 Faqja nuk ngarkohet ashtu siç është — `tools/build.js` mbledh në `dist/`
 vetëm atë që shkon në web, që `src-images/` dhe `tools/` të mos përfundojnë
