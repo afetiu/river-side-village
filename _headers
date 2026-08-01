@@ -1,0 +1,18 @@
+# Cloudflare Pages — kokat e përgjigjes
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+
+# Fotot dhe planet ndryshojnë rrallë.
+/assets/*
+  Cache-Control: public, max-age=2592000
+
+# CSS-i dhe JS-i nuk kanë hash në emër, prandaj mbahen shkurt —
+# përndryshe një ndryshim nuk do të shihej për ditë të tëra.
+/css/*
+  Cache-Control: public, max-age=3600, must-revalidate
+/js/*
+  Cache-Control: public, max-age=3600, must-revalidate

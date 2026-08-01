@@ -77,15 +77,47 @@ npx http-server . -p 8899 -c-1
 
 Duhet server (jo `file://`) sepse skripti është modul ES.
 
-## Domeni
+## Deploy — Cloudflare Pages
 
-Pas blerjes së domenit:
+Domeni: **riversidevilla7.com** (i regjistruar te GoDaddy).
+Projekti në Cloudflare: `river-side-villa-7`.
 
-1. Krijo skedarin `CNAME` në rrënjë me vetëm domenin brenda, p.sh. `shtepia.com`
-2. Te regjistruesi i domenit shto katër A-records për apex-in:
-   `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   (dhe një CNAME `www` → `afetiu.github.io`)
-3. Në Settings → Pages të repos, vendos domenin dhe aktivizo *Enforce HTTPS*
+Faqja nuk ngarkohet ashtu siç është — `tools/build.js` mbledh në `dist/`
+vetëm atë që shkon në web, që `src-images/` dhe `tools/` të mos përfundojnë
+në server:
+
+```bash
+node tools/build.js
+npx wrangler pages deploy dist --project-name=river-side-villa-7
+```
+
+Çdo push në `main` e bën këtë vetë përmes `.github/workflows/deploy.yml`.
+Kërkon dy secrets te repo-ja (Settings → Secrets → Actions):
+
+| Secret | Nga ku merret |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | dash.cloudflare.com → My Profile → API Tokens → *Edit Cloudflare Workers* |
+| `CLOUDFLARE_ACCOUNT_ID` | dash.cloudflare.com → Workers & Pages → shiriti djathtas |
+
+`_headers` mban kokat e cache-it dhe të sigurisë. CSS-i dhe JS-i mbahen
+vetëm një orë sepse s'kanë hash në emër.
+
+### DNS
+
+Domeni duhet të jetë zonë në Cloudflare që apex-i të funksionojë (GoDaddy
+nuk lejon CNAME te apex-i):
+
+1. dash.cloudflare.com → *Add a site* → `riversidevilla7.com` → plani Free
+2. Cloudflare jep dy nameserver-a; vendosi te GoDaddy → *My Products* →
+   *DNS* → *Nameservers* → *Change* → *I'll use my own nameservers*
+3. Pasi zona të aktivizohet, lidh domenin me projektin:
+   ```bash
+   npx wrangler pages domain add riversidevilla7.com --project-name=river-side-villa-7
+   npx wrangler pages domain add www.riversidevilla7.com --project-name=river-side-villa-7
+   ```
+
+Certifikata dhe rekordet i vendos vetë Cloudflare. Propagimi i
+nameserver-ave zgjat zakonisht disa orë.
 
 ## Burimi
 

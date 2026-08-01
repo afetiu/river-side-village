@@ -1,2 +1,5 @@
 # fotot origjinale me rezolucion të plotë (≈60 MB) — nuk shkojnë në web
 src-images/
+
+# dosja e ndertimit per Cloudflare Pages
+dist/

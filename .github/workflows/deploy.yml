@@ -1,0 +1,45 @@
+name: Deploy në Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # mbledh vetëm skedarët që shkojnë në web (pa src-images/, tools/, .git/)
+      - name: Ndërto dist/
+        run: node tools/build.js
+
+      # pa secrets workflow-u rri i qetë — nuk deshton me te kuqe
+      - name: A janë vendosur secrets?
+        id: gate
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Mungojnë CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID — deploy-i u anashkalua."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: cloudflare/wrangler-action@v3
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=river-side-villa-7
