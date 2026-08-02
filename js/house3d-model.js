@@ -98,26 +98,36 @@ const L0 = {
   rails: [],
   furniture: [
     /* dhoma e gjumit ballore */
-    { t: 'bed', x: 0.55, z: 0.55, w: 1.60, d: 2.10, rot: 0 },
+    { t: 'bed', x: 0.62, z: 0.60, w: 1.60, d: 2.05, rot: 0 },
+    { t: 'nightstand', x: 2.32, z: 0.62, rot: 0 },
     { t: 'wardrobe', x: 0.25, z: 3.58, w: 2.85, d: 0.60, rot: 0 },
+
     /* banjo */
-    { t: 'wc', x: 5.30, z: 1.85, rot: 90 },
-    { t: 'basin', x: 4.35, z: 1.75, rot: 0 },
-    { t: 'shower', x: 4.30, z: 2.75, w: 0.90, d: 0.90 },
-    /* qëndrimi ditor */
-    { t: 'sofa', x: 0.45, z: 8.90, w: 2.30, d: 0.90, rot: 0 },
-    { t: 'sofa', x: 0.35, z: 6.40, w: 0.90, d: 2.00, rot: 0 },
-    { t: 'table', x: 1.35, z: 7.55, w: 1.10, d: 0.65, h: 0.40 },
-    { t: 'chair', x: 1.20, z: 6.15, rot: 180 },
-    { t: 'chair', x: 2.05, z: 6.15, rot: 180 },
+    { t: 'wc', x: 5.34, z: 1.78, rot: 90 },
+    { t: 'basin', x: 4.28, z: 1.72, rot: 0 },
+    { t: 'shower', x: 4.26, z: 2.62, w: 0.92, d: 0.92 },
+
+    /* qëndrimi ditor — divani nga kopshti, qilimi poshtë tij */
+    { t: 'rug', x: 0.45, z: 6.30, w: 2.60, d: 3.10 },
+    { t: 'sofa', x: 0.42, z: 8.55, w: 2.35, d: 0.95, rot: 0 },
+    { t: 'armchair', x: 0.55, z: 6.35, w: 0.82, d: 0.80, rot: 270 },
+    { t: 'armchair', x: 2.20, z: 6.35, w: 0.82, d: 0.80, rot: 270 },
+    { t: 'table', x: 1.05, z: 7.40, w: 1.15, d: 0.62, h: 0.40 },
+    { t: 'tvunit', x: 3.55, z: 6.55, w: 1.60, rot: 90 },
+    { t: 'plant', x: 0.45, z: 10.55 },
+
     /* tryezaria */
-    { t: 'table', x: 1.05, z: 4.75, w: 1.70, d: 0.95, h: 0.75 },
-    { t: 'chair', x: 1.15, z: 4.35, rot: 0 }, { t: 'chair', x: 1.85, z: 4.35, rot: 0 },
-    { t: 'chair', x: 1.15, z: 5.75, rot: 180 }, { t: 'chair', x: 1.85, z: 5.75, rot: 180 },
-    { t: 'chair', x: 0.55, z: 5.05, rot: 90 }, { t: 'chair', x: 2.50, z: 5.05, rot: 270 },
+    { t: 'table', x: 1.00, z: 4.70, w: 1.75, d: 0.95, h: 0.75 },
+    { t: 'pendant', x: 1.88, z: 5.18, h: 1.55 },
+    { t: 'chair', x: 1.10, z: 4.26, rot: 0 }, { t: 'chair', x: 1.85, z: 4.26, rot: 0 },
+    { t: 'chair', x: 1.10, z: 5.72, rot: 180 }, { t: 'chair', x: 1.85, z: 5.72, rot: 180 },
+    { t: 'chair', x: 0.50, z: 4.98, rot: 90 }, { t: 'chair', x: 2.53, z: 4.98, rot: 270 },
+
     /* kuzhina — përgjatë murit të djathtë prapa */
-    { t: 'counter', x: 5.10, z: 8.20, w: 0.65, d: 3.20, rot: 0 },
-    { t: 'counter', x: 3.40, z: 11.00, w: 1.70, d: 0.65, rot: 0 },
+    { t: 'counter', x: 5.12, z: 8.10, w: 0.63, d: 3.30, rot: 0 },
+    { t: 'sink', x: 5.18, z: 9.10, rot: 90 },
+    { t: 'hob', x: 5.16, z: 10.30, rot: 90 },
+    { t: 'counter', x: 3.30, z: 10.95, w: 1.80, d: 0.62, rot: 0 },
   ],
 };
 
@@ -168,15 +178,26 @@ const L1 = {
     { x1: 4.45, z1: 4.60, x2: 4.45, z2: 8.00 },     // parmakët e boshtit të shkallëve
   ],
   furniture: [
-    { t: 'bed', x: 0.55, z: 0.60, w: 1.60, d: 2.10, rot: 0 },
-    { t: 'wardrobe', x: 0.25, z: 4.45, w: 3.17, d: 0.55, rot: 0 },
-    { t: 'bed', x: 0.55, z: 5.80, w: 1.60, d: 2.10, rot: 0 },
-    { t: 'wardrobe', x: 0.25, z: 9.48, w: 3.17, d: 0.55, rot: 0 },
-    { t: 'tub', x: 4.55, z: 1.80, w: 1.70, d: 0.75, rot: 0 },
-    { t: 'basin', x: 3.70, z: 3.20, rot: 0 },
-    { t: 'wc', x: 5.35, z: 3.35, rot: 90 },
-    { t: 'washer', x: 3.60, z: 10.90, rot: 0 },
-    { t: 'counter', x: 4.45, z: 10.85, w: 1.25, d: 0.60, rot: 0 },
+    /* dhoma ballore */
+    { t: 'bed', x: 0.62, z: 0.62, w: 1.60, d: 2.05, rot: 0 },
+    { t: 'nightstand', x: 2.34, z: 0.64, rot: 0 },
+    { t: 'rug', x: 0.40, z: 2.90, w: 2.00, d: 1.30 },
+    { t: 'wardrobe', x: 0.25, z: 4.42, w: 3.17, d: 0.55, rot: 0 },
+
+    /* dhoma e prapme */
+    { t: 'bed', x: 0.62, z: 5.85, w: 1.60, d: 2.05, rot: 0 },
+    { t: 'nightstand', x: 2.34, z: 5.87, rot: 0 },
+    { t: 'plant', x: 2.80, z: 8.70 },
+    { t: 'wardrobe', x: 0.25, z: 9.45, w: 3.17, d: 0.55, rot: 0 },
+
+    /* banjo */
+    { t: 'tub', x: 4.02, z: 1.78, w: 1.68, d: 0.76, rot: 0 },
+    { t: 'basin', x: 3.62, z: 3.02, rot: 0 },
+    { t: 'wc', x: 5.36, z: 3.30, rot: 90 },
+
+    /* utiliti */
+    { t: 'washer', x: 3.58, z: 10.85, rot: 0 },
+    { t: 'counter', x: 4.42, z: 10.88, w: 1.28, d: 0.60, rot: 0 },
   ],
 };
 
@@ -232,18 +253,32 @@ const L2 = {
     { x1: 4.45, z1: 4.60, x2: 5.75, z2: 4.60 },
   ],
   furniture: [
-    { t: 'bed', x: 0.55, z: 0.70, w: 1.60, d: 2.10, rot: 0 },
-    { t: 'wardrobe', x: 0.25, z: 5.30, w: 3.17, d: 0.55, rot: 0 },
-    { t: 'bed', x: 0.55, z: 6.60, w: 1.60, d: 2.10, rot: 0 },
-    { t: 'wardrobe', x: 0.25, z: 9.35, w: 3.17, d: 0.55, rot: 0 },
-    { t: 'shower', x: 3.70, z: 8.30, w: 0.90, d: 0.90 },
-    { t: 'basin', x: 4.90, z: 8.25, rot: 0 },
-    { t: 'wc', x: 5.35, z: 9.60, rot: 90 },
-    { t: 'washer', x: 3.70, z: 10.75, rot: 0 },
+    /* dhoma ballore — më e madhja e shtëpisë */
+    { t: 'bed', x: 0.66, z: 0.72, w: 1.60, d: 2.05, rot: 0 },
+    { t: 'nightstand', x: 2.38, z: 0.74, rot: 0 },
+    { t: 'rug', x: 0.45, z: 3.05, w: 2.10, d: 1.40 },
+    { t: 'armchair', x: 2.30, z: 4.30, w: 0.80, d: 0.78, rot: 200 },
+    { t: 'plant', x: 0.40, z: 4.55 },
+    { t: 'wardrobe', x: 0.25, z: 5.26, w: 3.17, d: 0.55, rot: 0 },
+
+    /* dhoma e prapme */
+    { t: 'bed', x: 0.66, z: 6.62, w: 1.60, d: 2.05, rot: 0 },
+    { t: 'nightstand', x: 2.38, z: 6.64, rot: 0 },
+    { t: 'wardrobe', x: 0.25, z: 9.32, w: 3.17, d: 0.55, rot: 0 },
+
+    /* banjo nën shkallë */
+    { t: 'shower', x: 3.62, z: 8.22, w: 0.94, d: 0.94 },
+    { t: 'basin', x: 4.86, z: 8.20, rot: 0 },
+    { t: 'wc', x: 5.36, z: 9.52, rot: 90 },
+
+    /* utiliti */
+    { t: 'washer', x: 3.64, z: 10.72, rot: 0 },
+
     /* tarraca */
-    { t: 'table', x: 4.10, z: 2.40, w: 1.00, d: 1.00, h: 0.72 },
-    { t: 'chair', x: 4.10, z: 1.85, rot: 0 },
-    { t: 'chair', x: 4.10, z: 3.35, rot: 180 },
+    { t: 'table', x: 4.02, z: 2.30, w: 1.05, d: 1.05, h: 0.72 },
+    { t: 'chair', x: 4.10, z: 1.72, rot: 0 },
+    { t: 'chair', x: 4.10, z: 3.30, rot: 180 },
+    { t: 'plant', x: 5.30, z: 1.60 },
   ],
 };
 

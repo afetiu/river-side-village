@@ -12,15 +12,18 @@
 
 /* Specifikuesit «three» dhe «three/addons/» zgjidhen nga harta e importeve
    te <head> i index.html — versioni ndërrohet vetëm atje. */
-let THREE, OrbitControls;
+let THREE, OrbitControls, RoundedBoxGeometry;
 
 async function loadThree() {
   if (THREE) return;
   THREE = await import('three');
   ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
+  ({ RoundedBoxGeometry } = await import('three/addons/geometries/RoundedBoxGeometry.js'));
 }
 
 /* ── teksturat procedurale ───────────────────────────────────────────── */
+
+let MAX_ANISO = 8;
 
 function canvasTex(w, h, draw, repeat) {
   const c = document.createElement('canvas');
@@ -29,10 +32,19 @@ function canvasTex(w, h, draw, repeat) {
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
   t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 8;
+  /* Dyshemeja shihet nën një kënd shumë të sheshtë; pa mipmap-a dhe pa
+     filtrim anizotropik dërrasat e largëta shndërrohen në vija që dridhen. */
+  t.generateMipmaps = true;
+  t.minFilter = THREE.LinearMipmapLinearFilter;
+  t.magFilter = THREE.LinearFilter;
+  t.anisotropy = MAX_ANISO;
   if (repeat) t.repeat.set(repeat[0], repeat[1]);
   return t;
 }
+
+/* ndihmës i vogël: ngjyrë me luhatje të lehtë rreth një baze */
+const jitter = (r, g, b, v) =>
+  `rgb(${Math.min(255, r * v) | 0},${Math.min(255, g * v) | 0},${Math.min(255, b * v) | 0})`;
 
 function brickTexture() {
   // një metër katror tulle: 8 rreshta × ~0.12 m, në tonin e fasadës reale
@@ -62,25 +74,73 @@ function grassTexture() {
   });
 }
 
+/* Laminat: një pllakë 1,90 × 1,90 m me 10 dërrasa ~19 cm, fugat e kokës
+   të shkallëzuara rresht pas rreshti dhe damarë të lehtë përgjatë fibrës. */
 function woodTexture() {
-  return canvasTex(256, 256, (g) => {
-    g.fillStyle = '#c9a678'; g.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 8; i++) {
-      g.fillStyle = `rgba(150,112,70,${0.10 + Math.random() * 0.16})`;
-      g.fillRect(0, i * 32 + Math.random() * 4, 256, 30);
-      g.fillStyle = 'rgba(255,255,255,0.22)';
-      g.fillRect(0, i * 32, 256, 1);
+  const N = 512, rows = 10, rh = N / rows;
+  return canvasTex(N, N, (g) => {
+    g.fillStyle = '#b08d63'; g.fillRect(0, 0, N, N);
+
+    for (let r = 0; r < rows; r++) {
+      const y = r * rh;
+      // dërrasa të gjata ~1,0-1,3 m, me fillim të zhvendosur në çdo rresht
+      let x = -((r * 137) % 260) - 40;
+      while (x < N) {
+        const w = 150 + ((r * 61 + x * 7) % 130);
+        const v = 0.94 + (((r * 31 + x) % 17) / 17) * 0.12;   // luhatje e butë, jo me arna
+        g.fillStyle = jitter(196, 158, 112, v);
+        g.fillRect(x, y, w - 2, rh - 1.5);
+
+        // damarë përgjatë dërrasës
+        g.save();
+        g.beginPath(); g.rect(x, y, w - 2, rh - 1.5); g.clip();
+        for (let k = 0; k < 7; k++) {
+          const gy = y + 2 + ((k * 53 + x) % (rh - 4));
+          g.strokeStyle = `rgba(120,88,55,${0.05 + ((k * 13 + x) % 9) / 90})`;
+          g.lineWidth = 0.8 + ((k + x) % 3) * 0.4;
+          g.beginPath();
+          g.moveTo(x, gy);
+          g.bezierCurveTo(x + w * 0.3, gy - 2.5, x + w * 0.7, gy + 2.5, x + w, gy);
+          g.stroke();
+        }
+        g.restore();
+
+        // fuga e kokës
+        g.fillStyle = 'rgba(96,70,44,0.42)';
+        g.fillRect(x + w - 2, y, 2, rh - 1.5);
+        x += w;
+      }
+      // fuga gjatësore mes rreshtave
+      g.fillStyle = 'rgba(96,70,44,0.34)';
+      g.fillRect(0, y + rh - 1.5, N, 1.5);
     }
   });
 }
 
-function tileTexture(base, line) {
-  return canvasTex(128, 128, (g) => {
-    g.fillStyle = base; g.fillRect(0, 0, 128, 128);
-    g.strokeStyle = line; g.lineWidth = 2;
-    for (let i = 0; i <= 128; i += 32) {
-      g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 128); g.stroke();
-      g.beginPath(); g.moveTo(0, i); g.lineTo(128, i); g.stroke();
+/* Keramikë: pllaka 30 cm me fugë të hollë dhe njolla të buta guri. */
+function tileTexture(base, line, grout) {
+  const N = 512, cells = 4, cs = N / cells;
+  return canvasTex(N, N, (g) => {
+    g.fillStyle = grout; g.fillRect(0, 0, N, N);
+    for (let r = 0; r < cells; r++) {
+      for (let c = 0; c < cells; c++) {
+        const v = 0.96 + (((r * 7 + c * 13) % 9) / 9) * 0.09;
+        g.fillStyle = jitter(...base, v);
+        g.fillRect(c * cs + 1.5, r * cs + 1.5, cs - 3, cs - 3);
+        g.save();
+        g.beginPath(); g.rect(c * cs + 1.5, r * cs + 1.5, cs - 3, cs - 3); g.clip();
+        for (let k = 0; k < 5; k++) {
+          const cx = c * cs + ((k * 47 + r * 29) % cs);
+          const cy = r * cs + ((k * 83 + c * 37) % cs);
+          const rad = 12 + ((k * 19) % 26);
+          const grd = g.createRadialGradient(cx, cy, 0, cx, cy, rad);
+          grd.addColorStop(0, `rgba(${line},0.07)`);
+          grd.addColorStop(1, `rgba(${line},0)`);
+          g.fillStyle = grd;
+          g.beginPath(); g.arc(cx, cy, rad, 0, Math.PI * 2); g.fill();
+        }
+        g.restore();
+      }
     }
   });
 }
@@ -92,8 +152,8 @@ function makeMaterials() {
   const brick = brickTexture();
   const wood = woodTexture();
   const grass = grassTexture();
-  const cer = tileTexture('#ddd8d0', '#c9c2b8');
-  const bath = tileTexture('#ccdae1', '#b3c6cf');
+  const cer = tileTexture([226, 221, 213], '150,140,126', '#c2bbb0');
+  const bath = tileTexture([214, 226, 232], '120,146,160', '#b6c4cc');
 
   return {
     ext: std({ color: 0xece7de, roughness: 0.94 }),
@@ -123,13 +183,37 @@ function makeMaterials() {
     rail: std({ color: 0x2b2b2d, roughness: 0.45, metalness: 0.4 }),
     /* xhami i fqinjëve — i errët por jo i zi, që të lexohet si dritare */
     darkGlass: std({ color: 0x46545c, roughness: 0.16, metalness: 0.45 }),
-    step: std({ color: 0xd9d3c8, roughness: 0.85 }),
-    /* Mobiliet duhet të dallohen nga muret, përndryshe prerja e katit del
-       si një pllakë e bardhë pa asgjë brenda. */
-    soft: std({ color: 0xc3b7a3, roughness: 0.95 }),
-    linen: std({ color: 0xfaf8f3, roughness: 0.95 }),
-    timber: std({ color: 0xa8896a, roughness: 0.78 }),
-    stone: std({ color: 0x6b6f73, roughness: 0.45 }),
+    step: std({ color: 0xe6e1d7, roughness: 0.9 }),
+    tread: std({ color: 0xa88861, roughness: 0.6 }),
+
+    /* ── mobiliet ──
+       Duhet të dallohen nga muret, përndryshe prerja e katit del si një
+       pllakë e bardhë pa asgjë brenda. Pëlhura mat, dru i ngrohtë, metal
+       i errët — e njëjta paletë si vetë faqja.                          */
+    fabric: std({ color: 0xb9b0a1, roughness: 1.0 }),        // jastëkët
+    fabricDark: std({ color: 0x9a9284, roughness: 1.0 }),    // trupi e krahët
+    chairSeat: std({ color: 0xa89b88, roughness: 0.95 }),
+    blanket: std({ color: 0x8d8677, roughness: 1.0 }),
+    linen: std({ color: 0xfaf8f3, roughness: 0.98 }),
+    headboard: std({ color: 0x8e8578, roughness: 1.0 }),
+    timber: std({ color: 0xb08f6b, roughness: 0.72 }),
+    timberDark: std({ color: 0x6f5740, roughness: 0.68 }),
+    timberDoor: std({ color: 0xa4855f, roughness: 0.66 }),
+    cabinet: std({ color: 0xe8e3da, roughness: 0.62 }),
+    cabinetDoor: std({ color: 0xdfd8cd, roughness: 0.55 }),
+    stone: std({ color: 0x55595e, roughness: 0.32, metalness: 0.05 }),
+    steel: std({ color: 0xc2c6ca, roughness: 0.24, metalness: 0.85 }),
+    hob: std({ color: 0x24262a, roughness: 0.18, metalness: 0.3 }),
+    screen: std({ color: 0x16181c, roughness: 0.10, metalness: 0.4 }),
+    rug: std({ color: 0x9c9484, roughness: 1.0 }),
+    pot: std({ color: 0xb07a56, roughness: 0.85 }),
+    stem: std({ color: 0x6d7a52, roughness: 0.9 }),
+    leaf: std({ color: 0x5f7a4a, roughness: 0.88 }),
+    shade: std({ color: 0x2f3134, roughness: 0.5, metalness: 0.25 }),
+    bulb: std({ color: 0xfff1d4, emissive: 0xffe9c0, emissiveIntensity: 0.9, roughness: 0.4 }),
+    mirror: std({ color: 0xdfe8ec, roughness: 0.05, metalness: 0.95 }),
+    water: std({ color: 0xbcd7e2, roughness: 0.08, transparent: true, opacity: 0.55 }),
+    glassDark: std({ color: 0x3b4248, roughness: 0.1, metalness: 0.5 }),
     porcelain: std({ color: 0xfbfbfa, roughness: 0.22 }),
     neighbour: std({ color: 0xdcd6cc, roughness: 0.95 }),
   };
@@ -145,21 +229,31 @@ const box = (w, h, d, mat, x, y, z, group) => {
   return m;
 };
 
-/** Vendos një kuti me këndet e dhëna në planin XZ. */
+/* Sa metra bota mbulon një përsëritje e teksturës së dyshemesë.
+   Pa këtë çdo dhomë do të shtrinte të njëjtat dërrasa sa e gjatë është ajo. */
+const FLOOR_TILE = { laminat: 1.90, keramik: 1.20, banjo: 1.00, jashte: 0.90, plate: 2.40 };
+
+/** Dyshemeja e një zone.
+    Pllaka strukturore (`plate`) shkon POSHTË nivelit, veshja sipër tij —
+    po t'i lije në të njëjtën lartësi, të dyja luftojnë për të njëjtin piksel
+    dhe dyshemeja del me vija që dridhen. */
 function slabMesh(s, mats, y, group) {
-  const t = 0.04;
+  const struct = s.mat === 'plate';
+  const t = struct ? 0.14 : 0.02;
+  const top = struct ? y : y + t;                 // sipërfaqja e sipërme
   const m = new THREE.Mesh(new THREE.BoxGeometry(s.w, t, s.d), mats[s.mat] || mats.plate);
-  m.position.set(s.x + s.w / 2, y + t / 2, s.z + s.d / 2);
+  m.position.set(s.x + s.w / 2, top - t / 2, s.z + s.d / 2);
   m.receiveShadow = true;
   group.add(m);
-  // teksturat e dyshemesë duhet të ndjekin përmasat, jo të shtrihen
+
   const map = m.material.map;
   if (map) {
+    const step = FLOOR_TILE[s.mat] || 1.2;
     m.material = m.material.clone();
     m.material.map = map.clone();
     m.material.map.needsUpdate = true;
     m.material.map.wrapS = m.material.map.wrapT = THREE.RepeatWrapping;
-    m.material.map.repeat.set(s.w / 1.2, s.d / 1.2);
+    m.material.map.repeat.set(s.w / step, s.d / step);
   }
   return m;
 }
@@ -285,15 +379,25 @@ function buildWall(w, mats, baseY, group) {
   }
 }
 
-/** Shkallë të drejta që ngjiten nga `z` drejt `z + run`. */
+/** Shkallë të drejta që ngjiten nga `z` drejt `z + run`.
+    Çdo shkallare: trupi i bardhë poshtë dhe një pllakë druri sipër që del
+    pak përpara — pa këtë të dytën shkallët duken si një dhëmbëzim i thatë. */
 function buildStair(st, mats, baseY, group, rise) {
   const n = st.steps, r = rise / n, g = st.run / n;
+  const TREAD = 0.045, NOSE = 0.025;
   for (let i = 0; i < n; i++) {
     const h = r * (i + 1);
-    const m = new THREE.Mesh(new THREE.BoxGeometry(st.w, h, g), mats.step);
-    m.position.set(st.x + st.w / 2, baseY + h / 2, st.z + st.run - (i + 0.5) * g);
-    m.castShadow = m.receiveShadow = true;
-    group.add(m);
+    const cz = st.z + st.run - (i + 0.5) * g;
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(st.w, h - TREAD, g), mats.step);
+    body.position.set(st.x + st.w / 2, baseY + (h - TREAD) / 2, cz);
+    body.castShadow = body.receiveShadow = true;
+    group.add(body);
+
+    const tread = new THREE.Mesh(new THREE.BoxGeometry(st.w, TREAD, g + NOSE), mats.tread);
+    tread.position.set(st.x + st.w / 2, baseY + h - TREAD / 2, cz - NOSE / 2);
+    tread.castShadow = tread.receiveShadow = true;
+    group.add(tread);
   }
 }
 
@@ -320,76 +424,242 @@ function buildFurniture(f, mats, baseY, group) {
   g.position.set(f.x, baseY, f.z);
   group.add(g);
   const rot = ((f.rot || 0) * Math.PI) / 180;
+  const c = Math.cos(rot), s = Math.sin(rot);
 
-  const put = (w, h, d, mat, x, y, z) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    // rrotullim rreth cepit të përparmë-majtë të objektit
-    const c = Math.cos(rot), s = Math.sin(rot);
+  const place = (m, x, y, z) => {
     m.position.set(x * c + z * s, y, -x * s + z * c);
+    m.rotation.y = rot;
     m.castShadow = m.receiveShadow = true;
     g.add(m);
     return m;
   };
 
+  /** kuti e thjeshtë */
+  const put = (w, h, d, mat, x, y, z) =>
+    place(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat), x, y, z);
+
+  /** kuti me qoshe të rrumbullakosura — mobiliet e vërteta s'kanë brinjë të thara */
+  const soft = (w, h, d, mat, x, y, z, r = 0.035) => {
+    const rad = Math.min(r, w / 2.2, h / 2.2, d / 2.2);
+    return place(new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 2, rad), mat), x, y, z);
+  };
+
+  /** cilindër — këmbë, tuba, tenxhere lulesh */
+  const rod = (rTop, rBot, h, mat, x, y, z, tilt = 0) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, h, 12), mat);
+    place(m, x, y, z);
+    if (tilt) m.rotation.z = tilt;
+    return m;
+  };
+
+  /** katër këmbë të holla druri, si te mobiliet skandinave */
+  const legs = (w, d, h, mat, inset = 0.09, rTop = 0.022, rBot = 0.016) => {
+    for (const [ox, oz] of [[inset, inset], [w - inset, inset], [inset, d - inset], [w - inset, d - inset]]) {
+      const m = rod(rTop, rBot, h, mat, ox, h / 2, oz);
+      m.rotation.x = 0.05 * (oz < d / 2 ? 1 : -1);
+      m.rotation.z = 0.05 * (ox < w / 2 ? 1 : -1);
+    }
+  };
+
   switch (f.t) {
+    /* Krevat: kornizë e ulët druri mbi këmbë, dyshek i rrumbullakosur,
+       jorgan i palosur në fund dhe dy jastëkë të mbështetur te koka. */
     case 'bed': {
       const w = f.w, d = f.d;
-      put(w, 0.28, d, mats.timber, w / 2, 0.14, d / 2);              // baza
-      put(w - 0.08, 0.24, d - 0.30, mats.linen, w / 2, 0.40, d / 2 - 0.05);
-      put(w - 0.24, 0.13, 0.44, mats.linen, w / 2, 0.58, 0.36);      // jastëkët
-      put(w - 0.08, 0.05, d * 0.42, mats.soft, w / 2, 0.54, d - d * 0.21);
-      put(w + 0.06, 0.62, 0.09, mats.timber, w / 2, 0.31, -0.02);    // koka e krevatit
+      soft(w, 0.16, d, mats.timber, w / 2, 0.26, d / 2, 0.03);          // korniza
+      legs(w, d, 0.18, mats.timberDark, 0.10, 0.024, 0.018);
+      soft(w - 0.06, 0.24, d - 0.10, mats.linen, w / 2, 0.46, d / 2, 0.05);  // dysheku
+      soft(w - 0.10, 0.10, d * 0.40, mats.blanket, w / 2, 0.62, d - d * 0.22, 0.04); // jorgani
+      for (const side of [-1, 1]) {
+        const p = soft(w * 0.42, 0.14, 0.34, mats.linen, w / 2 + side * w * 0.23, 0.65, 0.30, 0.06);
+        p.rotation.x = -0.30;
+      }
+      soft(w + 0.04, 0.75, 0.10, mats.headboard, w / 2, 0.50, -0.01, 0.04);  // koka
       break;
     }
-    case 'wardrobe':
-      // 2,05 m: sa e vërteta, por pa e mbyllur pamjen e prerjes së katit
-      put(f.w, 2.05, f.d, mats.timber, f.w / 2, 1.025, f.d / 2);
+
+    /* Dollap: trupi, dy dyer me fugë mes tyre dhe doreza vertikale. */
+    case 'wardrobe': {
+      const w = f.w, h = 2.05, d = f.d;
+      put(w, h, d, mats.timber, w / 2, h / 2, d / 2);
+      const doors = Math.max(2, Math.round(w / 0.62));
+      const dw = w / doors;
+      for (let i = 0; i < doors; i++) {
+        soft(dw - 0.02, h - 0.08, 0.03, mats.timberDoor, i * dw + dw / 2, h / 2, -0.005, 0.008);
+        rod(0.010, 0.010, 0.34, mats.rail, i * dw + dw - 0.06, h * 0.52, -0.035);
+      }
       break;
+    }
+
+    /* Divan: bazë e ulët, dy jastëkë uljeje, dy shpine, krahë të butë
+       dhe këmbë druri — jo një kub i vetëm. */
     case 'sofa': {
-      const w = f.w, d = f.d;
-      put(w, 0.34, d, mats.soft, w / 2, 0.17, d / 2);
-      put(w, 0.42, 0.18, mats.soft, w / 2, 0.52, d - 0.09);
-      put(0.16, 0.30, d, mats.soft, 0.08, 0.49, d / 2);
-      put(0.16, 0.30, d, mats.soft, w - 0.08, 0.49, d / 2);
+      const w = f.w, d = f.d, arm = 0.17;
+      soft(w, 0.20, d, mats.fabricDark, w / 2, 0.24, d / 2, 0.04);      // baza
+      legs(w, d, 0.14, mats.timberDark, 0.12, 0.020, 0.015);
+      const seatW = w - arm * 2, n = Math.max(1, Math.round(seatW / 0.62));
+      for (let i = 0; i < n; i++)                                        // jastëkët e uljes
+        soft(seatW / n - 0.03, 0.15, d - 0.26, mats.fabric,
+          arm + (i + 0.5) * (seatW / n), 0.41, d / 2 - 0.05, 0.05);
+      for (let i = 0; i < n; i++) {                                      // jastëkët e shpinës
+        const b = soft(seatW / n - 0.03, 0.38, 0.16, mats.fabric,
+          arm + (i + 0.5) * (seatW / n), 0.66, d - 0.14, 0.05);
+        b.rotation.x = 0.13;
+      }
+      soft(arm, 0.44, d, mats.fabricDark, arm / 2, 0.52, d / 2, 0.06);   // krahët
+      soft(arm, 0.44, d, mats.fabricDark, w - arm / 2, 0.52, d / 2, 0.06);
       break;
     }
+
+    /* Kolltuk — një divan i vogël me shpinë të pjerrët. */
+    case 'armchair': {
+      const w = f.w || 0.80, d = f.d || 0.78;
+      soft(w, 0.18, d, mats.fabricDark, w / 2, 0.26, d / 2, 0.05);
+      legs(w, d, 0.17, mats.timberDark, 0.12, 0.019, 0.014);
+      soft(w - 0.24, 0.14, d - 0.22, mats.fabric, w / 2, 0.42, d / 2 - 0.04, 0.05);
+      const back = soft(w - 0.06, 0.44, 0.16, mats.fabric, w / 2, 0.62, d - 0.10, 0.06);
+      back.rotation.x = 0.20;
+      soft(0.13, 0.30, d - 0.10, mats.fabricDark, 0.07, 0.44, d / 2, 0.05);
+      soft(0.13, 0.30, d - 0.10, mats.fabricDark, w - 0.07, 0.44, d / 2, 0.05);
+      break;
+    }
+
+    /* Tavolinë: fletë me buzë të lehtë dhe këmbë të holla të pjerrëta. */
     case 'table': {
-      const h = f.h || 0.75;
-      put(f.w, 0.05, f.d, mats.timber, f.w / 2, h, f.d / 2);
-      for (const [ox, oz] of [[0.08, 0.08], [f.w - 0.08, 0.08], [0.08, f.d - 0.08], [f.w - 0.08, f.d - 0.08]])
-        put(0.06, h, 0.06, mats.timber, ox, h / 2, oz);
+      const h = f.h || 0.75, w = f.w, d = f.d;
+      soft(w, 0.045, d, mats.timber, w / 2, h - 0.022, d / 2, 0.012);
+      legs(w, d, h - 0.045, mats.timberDark, 0.10, 0.026, 0.017);
+      if (h > 0.6) soft(w - 0.30, 0.03, d - 0.24, mats.timberDark, w / 2, h - 0.16, d / 2, 0.01);
       break;
     }
-    case 'chair':
-      put(0.44, 0.05, 0.44, mats.timber, 0.22, 0.45, 0.22);
-      put(0.44, 0.48, 0.06, mats.timber, 0.22, 0.69, 0.03);
-      for (const [ox, oz] of [[0.05, 0.05], [0.39, 0.05], [0.05, 0.39], [0.39, 0.39]])
-        put(0.04, 0.45, 0.04, mats.timber, ox, 0.225, oz);
+
+    /* Karrige: ulëse e rrumbullakosur, shpinë e pjerrët, katër këmbë. */
+    case 'chair': {
+      soft(0.44, 0.055, 0.44, mats.chairSeat, 0.22, 0.45, 0.22, 0.02);
+      const back = soft(0.42, 0.44, 0.05, mats.chairSeat, 0.22, 0.70, 0.045, 0.02);
+      back.rotation.x = -0.10;
+      legs(0.44, 0.44, 0.45, mats.timberDark, 0.055, 0.018, 0.012);
       break;
-    case 'counter':
-      put(f.w, 0.88, f.d, mats.linen, f.w / 2, 0.44, f.d / 2);
-      put(f.w + 0.03, 0.05, f.d + 0.03, mats.stone, f.w / 2, 0.905, f.d / 2);
+    }
+
+    /* Kuzhinë: trup, dyer me doreza, plani i gurit dhe një cokull i tërhequr. */
+    case 'counter': {
+      const w = f.w, d = f.d, h = 0.86;
+      put(w - 0.06, 0.10, d - 0.06, mats.timberDark, w / 2, 0.05, d / 2);   // cokulli
+      put(w, h - 0.10, d, mats.cabinet, w / 2, 0.10 + (h - 0.10) / 2, d / 2);
+      const along = w >= d;                                                  // ana e dukshme
+      const n = Math.max(2, Math.round((along ? w : d) / 0.60));
+      for (let i = 0; i < n; i++) {
+        const t = (i + 0.5) / n;
+        if (along) {
+          soft(w / n - 0.02, h - 0.20, 0.025, mats.cabinetDoor, t * w, 0.10 + (h - 0.10) / 2, -0.008, 0.008);
+          rod(0.009, 0.009, 0.26, mats.rail, t * w + w / n / 2 - 0.05, h * 0.62, -0.032);
+        } else {
+          const p = soft(0.025, h - 0.20, d / n - 0.02, mats.cabinetDoor, -0.008, 0.10 + (h - 0.10) / 2, t * d, 0.008);
+          p.rotation.y = rot;
+          const hd = rod(0.009, 0.009, 0.26, mats.rail, -0.032, h * 0.62, t * d + d / n / 2 - 0.05);
+          hd.rotation.y = rot;
+        }
+      }
+      soft(w + 0.04, 0.045, d + 0.04, mats.stone, w / 2, h + 0.02, d / 2, 0.010); // plani
       break;
+    }
+
+    /* Sinku dhe zjarri, të vendosur mbi një plan kuzhine. */
+    case 'sink':
+      put(0.50, 0.02, 0.40, mats.steel, 0.25, 0.885, 0.20);
+      put(0.44, 0.10, 0.34, mats.steel, 0.22, 0.835, 0.20);
+      rod(0.016, 0.016, 0.26, mats.steel, 0.25, 1.02, 0.06);
+      put(0.16, 0.022, 0.022, mats.steel, 0.31, 1.14, 0.06);
+      break;
+    case 'hob':
+      put(0.58, 0.015, 0.50, mats.hob, 0.29, 0.895, 0.25);
+      for (const [ox, oz] of [[0.16, 0.16], [0.42, 0.16], [0.16, 0.36], [0.42, 0.36]])
+        rod(0.075, 0.075, 0.010, mats.steel, ox, 0.905, oz);
+      break;
+
+    /* Mobilie televizori me një ekran të hollë sipër. */
+    case 'tvunit': {
+      const w = f.w || 1.60;
+      soft(w, 0.36, 0.40, mats.cabinet, w / 2, 0.30, 0.20, 0.02);
+      legs(w, 0.40, 0.12, mats.timberDark, 0.14, 0.018, 0.013);
+      soft(w - 0.06, 0.03, 0.34, mats.cabinetDoor, w / 2, 0.30, -0.015, 0.008);
+      put(0.10, 0.16, 0.10, mats.frame, w / 2, 0.56, 0.20);                 // këmba
+      soft(w * 0.78, 0.60, 0.035, mats.screen, w / 2, 0.94, 0.20, 0.010);   // ekrani
+      break;
+    }
+
+    /* Qilim — vetëm një fletë shumë e hollë, pak mbi dysheme. */
+    case 'rug':
+      put(f.w, 0.012, f.d, mats.rug, f.w / 2, 0.026, f.d / 2);
+      break;
+
+    /* Bimë në vazo. */
+    case 'plant': {
+      rod(0.17, 0.13, 0.34, mats.pot, 0.17, 0.17, 0.17);
+      rod(0.025, 0.030, 0.42, mats.stem, 0.17, 0.52, 0.17);
+      for (let i = 0; i < 7; i++) {
+        const a = (i / 7) * Math.PI * 2;
+        const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8), mats.leaf);
+        leaf.scale.set(1, 0.42, 0.72);
+        place(leaf, 0.17 + Math.cos(a) * 0.16, 0.76 + (i % 3) * 0.10, 0.17 + Math.sin(a) * 0.16);
+        leaf.rotation.y = -a;
+      }
+      break;
+    }
+
+    /* Llambë varëse mbi tryezë. */
+    case 'pendant': {
+      const drop = f.h || 1.55;
+      rod(0.006, 0.006, 2.80 - drop, mats.frame, 0, drop + (2.80 - drop) / 2, 0);
+      const shade = new THREE.Mesh(new THREE.ConeGeometry(0.20, 0.22, 18, 1, true), mats.shade);
+      shade.material.side = THREE.DoubleSide;
+      place(shade, 0, drop - 0.11, 0);
+      const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), mats.bulb);
+      place(bulb, 0, drop - 0.20, 0);
+      break;
+    }
+
+    /* Komodinë e vogël pranë krevatit. */
+    case 'nightstand':
+      soft(0.44, 0.36, 0.38, mats.timber, 0.22, 0.36, 0.19, 0.02);
+      legs(0.44, 0.38, 0.18, mats.timberDark, 0.08, 0.016, 0.012);
+      soft(0.40, 0.03, 0.02, mats.timberDoor, 0.22, 0.36, -0.005, 0.006);
+      break;
+
+    /* Pajisjet sanitare. */
     case 'wc':
-      put(0.38, 0.42, 0.60, mats.porcelain, 0.19, 0.21, 0.30);
-      put(0.36, 0.50, 0.16, mats.porcelain, 0.18, 0.46, 0.08);
+      soft(0.36, 0.36, 0.54, mats.porcelain, 0.19, 0.18, 0.30, 0.06);
+      soft(0.37, 0.06, 0.50, mats.porcelain, 0.19, 0.39, 0.30, 0.03);      // kapaku
+      soft(0.36, 0.46, 0.16, mats.porcelain, 0.18, 0.53, 0.08, 0.03);      // rezervuari
       break;
     case 'basin':
-      put(0.60, 0.16, 0.45, mats.porcelain, 0.30, 0.86, 0.22);
-      put(0.55, 0.78, 0.42, mats.soft, 0.30, 0.39, 0.21);
+      put(0.62, 0.62, 0.44, mats.cabinet, 0.31, 0.31, 0.22);               // mobilja
+      soft(0.62, 0.04, 0.44, mats.stone, 0.31, 0.64, 0.22, 0.008);
+      soft(0.44, 0.13, 0.32, mats.porcelain, 0.31, 0.72, 0.22, 0.05);      // lavamani
+      rod(0.014, 0.014, 0.22, mats.steel, 0.31, 0.83, 0.06);
+      put(0.13, 0.02, 0.02, mats.steel, 0.36, 0.93, 0.06);
+      soft(0.50, 0.70, 0.03, mats.mirror, 0.31, 1.45, 0.02, 0.01);         // pasqyra
       break;
     case 'tub':
-      put(f.w, 0.55, f.d, mats.porcelain, f.w / 2, 0.27, f.d / 2);
+      soft(f.w, 0.52, f.d, mats.porcelain, f.w / 2, 0.26, f.d / 2, 0.06);
+      put(f.w - 0.12, 0.06, f.d - 0.12, mats.water, f.w / 2, 0.49, f.d / 2);
+      rod(0.014, 0.014, 0.24, mats.steel, 0.10, 0.64, f.d / 2);
       break;
     case 'shower': {
       const w = f.w, d = f.d;
-      put(w, 0.06, d, mats.porcelain, w / 2, 0.03, d / 2);
-      const gl = new THREE.Mesh(new THREE.BoxGeometry(0.02, 1.95, d), mats.glass);
-      gl.position.set(w, 0.98, d / 2); g.add(gl);
+      soft(w, 0.05, d, mats.porcelain, w / 2, 0.025, d / 2, 0.012);
+      const gl = new THREE.Mesh(new THREE.BoxGeometry(0.015, 1.95, d), mats.glass);
+      place(gl, w, 0.98, d / 2);
+      rod(0.016, 0.016, 1.90, mats.steel, w - 0.01, 0.95, 0.02);
+      put(0.22, 0.02, 0.22, mats.steel, w / 2, 1.98, d / 2);               // koka e dushit
       break;
     }
     case 'washer':
-      put(0.60, 0.85, 0.60, mats.porcelain, 0.30, 0.43, 0.30);
+      put(0.60, 0.85, 0.60, mats.cabinet, 0.30, 0.425, 0.30);
+      soft(0.56, 0.80, 0.02, mats.cabinetDoor, 0.30, 0.425, -0.005, 0.01);
+      place(new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.04, 20), mats.glassDark),
+        0.30, 0.46, -0.02).rotation.x = Math.PI / 2;
       break;
   }
 }
@@ -410,9 +680,12 @@ function buildLevel(L, mats, M) {
   /* tavani — pllaka mbi këtë kat, fshihet kur shihet vetëm ky kat */
   const ceil = new THREE.Group();
   ceil.name = 'ceil';
+  /* Tavani mbaron pak para se të nisë pllaka e katit të sipërm — po t'i
+     lije të dyja të mbaronin te +3.00, faqet e tyre do të përputheshin. */
   for (const s of L.slabs.filter((s) => s.mat === 'plate')) {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(s.w, M.SLAB, s.d), mats.ceil);
-    m.position.set(s.x + s.w / 2, y + M.CH + M.SLAB / 2, s.z + s.d / 2);
+    const t = M.SLAB * 0.5;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(s.w, t, s.d), mats.ceil);
+    m.position.set(s.x + s.w / 2, y + M.CH + t / 2, s.z + s.d / 2);
     m.receiveShadow = true;
     ceil.add(m);
   }
@@ -558,6 +831,7 @@ export async function mount(host, opts = {}) {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.02;
+  MAX_ANISO = Math.min(16, renderer.capabilities.getMaxAnisotropy());
   host.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
