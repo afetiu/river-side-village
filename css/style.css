@@ -181,7 +181,9 @@ button{font:inherit;color:inherit}
 .col-right{background:var(--sheet);
   border:1px solid var(--line);border-radius:var(--r);
   box-shadow:0 26px 60px -34px rgba(70,56,42,.55);
-  display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;
+  /* vetëm dy radhë të shkruara; të tjerat vijnë vetë, që fshehja e një
+     fëmije (p.sh. butoni 3D) të mos lërë një radhë bosh me hapësirë */
+  display:grid;grid-template-rows:auto minmax(0,1fr);
   gap:var(--s3);padding:var(--s3);min-height:0}
 
 .floor-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
@@ -208,6 +210,8 @@ button{font:inherit;color:inherit}
   padding-top:var(--s2);border-top:1px solid var(--paper-3)}
 
 /* ---------- butoni 3D ---------- */
+/* `display:flex` e mbyt atributin `hidden`, prandaj duhet thënë veçmas */
+.btn-3d[hidden]{display:none}
 .btn-3d{
   display:flex;align-items:center;gap:.65em;width:100%;cursor:pointer;
   background:var(--ink);color:var(--paper);border:0;border-radius:calc(var(--r) - 2px);
@@ -334,7 +338,7 @@ button{font:inherit;color:inherit}
   /* shiriti shpërbëhet që fotot e vogla të rrinë menjëherë nën foton e madhe —
      përndryshe plani i katit futet mes tyre dhe ato duken të shkëputura */
   .strip{display:contents}
-  .col-right{order:6;min-height:auto;grid-template-rows:auto auto auto auto}
+  .col-right{order:6;min-height:auto;grid-template-rows:auto}
 
   /* asnjë zmadhim në celular — fshihet edhe ftesa, që të mos premtojë asgjë */
   .gal-zoom,.plan-zoom{display:none}

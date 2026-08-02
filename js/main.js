@@ -132,6 +132,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden
    shtypet butoni. Pas hapjes së parë mbahet i gjallë, veç fshihet.      */
 
 const v3d = $('#v3d');
+/* Butoni mund të jetë i fshehur ose i hequr fare — pa këtë kontroll, mungesa
+   e tij do të prishte gjithçka që vjen pas saj në këtë skedar. */
+const btn3d = $('#btn-3d');
 let viewer = null, loading = false;
 
 const HELP = {
@@ -180,10 +183,10 @@ function close3d() {
   if (viewer && viewer.mode === 'walk') viewer.setMode('orbit');
   showMode('orbit');
   v3d.hidden = true;
-  $('#btn-3d').focus();
+  if (btn3d && !btn3d.hidden) btn3d.focus();
 }
 
-$('#btn-3d').addEventListener('click', open3d);
+if (btn3d) btn3d.addEventListener('click', open3d);
 $('#v3d-close').addEventListener('click', close3d);
 
 $$('#v3d-bar [data-floor]').forEach(b => b.addEventListener('click', () => {
