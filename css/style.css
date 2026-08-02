@@ -181,7 +181,7 @@ button{font:inherit;color:inherit}
 .col-right{background:var(--sheet);
   border:1px solid var(--line);border-radius:var(--r);
   box-shadow:0 26px 60px -34px rgba(70,56,42,.55);
-  display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;
   gap:var(--s3);padding:var(--s3);min-height:0}
 
 .floor-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
@@ -206,6 +206,71 @@ button{font:inherit;color:inherit}
 .plan-img.is-on{opacity:1}
 .plan-note{margin:0;text-align:center;color:var(--ink-3);opacity:.8;
   padding-top:var(--s2);border-top:1px solid var(--paper-3)}
+
+/* ---------- butoni 3D ---------- */
+.btn-3d{
+  display:flex;align-items:center;gap:.65em;width:100%;cursor:pointer;
+  background:var(--ink);color:var(--paper);border:0;border-radius:calc(var(--r) - 2px);
+  padding:.72em .95em;text-align:left;
+  box-shadow:0 12px 26px -16px rgba(44,40,35,.85);
+  transition:background .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.btn-3d:hover{background:var(--brick);transform:translateY(-1px);
+  box-shadow:0 16px 30px -16px rgba(176,82,44,.8)}
+.btn-3d:active{transform:none}
+.btn-3d-ico{display:grid;place-items:center;opacity:.9;flex:none}
+.btn-3d-txt{font-size:.95rem;font-weight:500;letter-spacing:-.01em}
+.btn-3d-hint{margin-left:auto;font-family:var(--f-mono);font-size:.58rem;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.62}
+
+/* ---------- shikuesi 3D ---------- */
+.v3d{position:fixed;inset:0;z-index:300;background:#d9e3ea;overflow:hidden}
+.v3d[hidden]{display:none}
+.v3d-stage{position:absolute;inset:0}
+/* touch-action:none — pa të, tërheqja mbi canvas rrëshqet faqen në celular */
+.v3d-stage canvas{display:block;width:100%;height:100%;outline:none;touch-action:none}
+.v3d-stage[data-mode="walk"] canvas{cursor:grab}
+.v3d-stage[data-mode="walk"] canvas:active{cursor:grabbing}
+
+.v3d-top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;
+  gap:var(--s3);padding:calc(var(--s2) + env(safe-area-inset-top)) var(--s4) var(--s3);
+  background:linear-gradient(rgba(20,26,30,.42),transparent);pointer-events:none}
+.v3d-title{margin:0;color:#fff;font-size:.82rem;letter-spacing:.02em;
+  text-shadow:0 1px 10px rgba(0,0,0,.45)}
+.v3d-title span{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;opacity:.72}
+.v3d-close{margin-left:auto;pointer-events:auto;background:rgba(253,252,250,.92);
+  border:0;border-radius:50%;width:2.1rem;height:2.1rem;font-size:1rem;line-height:1;
+  color:var(--ink);cursor:pointer;transition:background .25s,color .25s}
+.v3d-close:hover{background:var(--brick);color:#fff}
+
+.v3d-bar{position:absolute;left:50%;transform:translateX(-50%);
+  bottom:calc(var(--s4) + env(safe-area-inset-bottom));
+  display:flex;flex-wrap:wrap;justify-content:center;gap:var(--s2);max-width:min(94vw,760px)}
+.v3d-seg{display:flex;background:rgba(253,252,250,.93);backdrop-filter:blur(14px);
+  border-radius:999px;padding:3px;box-shadow:0 14px 34px -18px rgba(20,26,30,.8)}
+.v3d-seg button{background:none;border:0;cursor:pointer;border-radius:999px;
+  padding:.5em 1.05em;color:var(--ink-3);
+  font-family:var(--f-mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;
+  transition:background .2s var(--ease),color .2s var(--ease)}
+.v3d-seg button:hover{color:var(--ink)}
+.v3d-seg button.is-on{background:var(--ink);color:var(--paper)}
+
+.v3d-help{position:absolute;left:50%;transform:translateX(-50%);
+  bottom:calc(var(--s4) + env(safe-area-inset-bottom) + 3.1rem);margin:0;
+  font-family:var(--f-mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.55);opacity:.8;
+  pointer-events:none;text-align:center;white-space:nowrap}
+
+.v3d-load{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;
+  gap:var(--s3);background:var(--paper);color:var(--ink-2);
+  font-family:var(--f-mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
+.v3d-load[hidden]{display:none}
+.v3d-spin{width:26px;height:26px;border-radius:50%;
+  border:2px solid var(--paper-3);border-top-color:var(--brick);
+  animation:v3dSpin .8s linear infinite}
+@keyframes v3dSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.v3d-spin{animation-duration:2.4s}}
 
 /* ---------- harta ---------- */
 .site-pin{position:relative}
@@ -269,7 +334,7 @@ button{font:inherit;color:inherit}
   /* shiriti shpërbëhet që fotot e vogla të rrinë menjëherë nën foton e madhe —
      përndryshe plani i katit futet mes tyre dhe ato duken të shkëputura */
   .strip{display:contents}
-  .col-right{order:6;min-height:auto;grid-template-rows:auto auto auto}
+  .col-right{order:6;min-height:auto;grid-template-rows:auto auto auto auto}
 
   /* asnjë zmadhim në celular — fshihet edhe ftesa, që të mos premtojë asgjë */
   .gal-zoom,.plan-zoom{display:none}
@@ -288,6 +353,15 @@ button{font:inherit;color:inherit}
 
   /* planet rrjedhin me faqen — pa shtresa absolute */
   .plan-sheet{aspect-ratio:705/1375}
+
+  /* shikuesi 3D: shiriti i kontrollit rri mbi shiritin e thirrjes */
+  .btn-3d{padding:.85em 1em}
+  .v3d-bar{bottom:calc(var(--s3) + env(safe-area-inset-bottom));gap:var(--s1);width:100%;padding:0 var(--gut)}
+  .v3d-seg button{padding:.55em .7em;letter-spacing:.08em}
+  .v3d-help{bottom:calc(var(--s3) + env(safe-area-inset-bottom) + 5.4rem);
+    white-space:normal;max-width:74vw;line-height:1.5}
+  .v3d-top{padding-inline:var(--gut)}
+  .v3d-title span{display:none}
 }
 
 @media (prefers-reduced-motion:reduce){

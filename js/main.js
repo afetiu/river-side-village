@@ -41,7 +41,7 @@ addEventListener('load', () => tabs.forEach(b => { new Image().src = b.dataset.p
 /* shigjetat majtas/djathtas mes kateve */
 document.addEventListener('keydown', e => {
   if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
-  if ($('#lb').hidden === false) return;
+  if ($('#lb').hidden === false || $('#v3d').hidden === false) return;
   const i = tabs.indexOf(floor);
   setFloor(tabs[e.key === 'ArrowRight' ? i + 1 : i - 1]);
 });
@@ -126,3 +126,78 @@ $('#plan-sheet').addEventListener('click', () => {
 $('#lb-close').addEventListener('click', closeLb);
 lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
+
+/* ---------- shikuesi 3D ----------
+   three.js zë disa qindra kilobajt, prandaj moduli tërhiqet vetëm kur
+   shtypet butoni. Pas hapjes së parë mbahet i gjallë, veç fshihet.      */
+
+const v3d = $('#v3d');
+let viewer = null, loading = false;
+
+const HELP = {
+  orbit: 'Tërhiq për të rrotulluar · rrotulla zmadhon',
+  walk: 'Prek dyshemenë për të shkuar atje · tërhiq për të parë rrotull · W A S D',
+};
+
+const pickBtn = (attr, value) =>
+  $$(`#v3d-bar [data-${attr}]`).forEach(b => b.classList.toggle('is-on', b.dataset[attr] === value));
+
+function showFloor(id) { pickBtn('floor', id); if (viewer) viewer.show(id); }
+
+function showMode(mode) {
+  pickBtn('mode', mode);
+  $('#v3d-help').textContent = HELP[mode] || HELP.orbit;
+}
+
+async function open3d() {
+  if (loading) return;
+  v3d.hidden = false;
+
+  if (!viewer) {
+    loading = true;
+    $('#v3d-load').hidden = false;
+    try {
+      const { mount } = await import('./house3d.js');
+      // shikuesi na njofton kur Esc-i e nxjerr vetë nga ecja
+      viewer = await mount($('#v3d-stage'), { onMode: showMode });
+    } catch (err) {
+      console.error('3D:', err);
+      $('#v3d-load').textContent = 'Modeli nuk u ngarkua. Kontrollo lidhjen dhe provo sërish.';
+      loading = false;
+      return;
+    }
+    $('#v3d-load').hidden = true;
+    loading = false;
+    showFloor('all');
+    showMode('orbit');
+  }
+  viewer.refresh();
+  $('#v3d-close').focus();
+  if (typeof gtag === 'function') gtag('event', 'view_3d');
+}
+
+function close3d() {
+  if (viewer && viewer.mode === 'walk') viewer.setMode('orbit');
+  showMode('orbit');
+  v3d.hidden = true;
+  $('#btn-3d').focus();
+}
+
+$('#btn-3d').addEventListener('click', open3d);
+$('#v3d-close').addEventListener('click', close3d);
+
+$$('#v3d-bar [data-floor]').forEach(b => b.addEventListener('click', () => {
+  showFloor(b.dataset.floor);
+  // ndërrimi i katit të kthen jashtë — përndryshe mbetesh brenda një muri
+  if (viewer && viewer.mode === 'walk') { viewer.setMode('orbit'); showMode('orbit'); }
+}));
+
+// setMode njofton vetë përmes onMode, prandaj butonat s'kanë nevojë të sinkronizohen këtu
+$$('#v3d-bar [data-mode]').forEach(b => b.addEventListener('click', () => viewer && viewer.setMode(b.dataset.mode)));
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || v3d.hidden) return;
+  // gjatë ecjes Esc-i të kthen te rrotullimi; pastaj mbyll shikuesin
+  if (viewer && viewer.mode === 'walk') { viewer.setMode('orbit'); return; }
+  close3d();
+});

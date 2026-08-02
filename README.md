@@ -13,7 +13,9 @@ theks tulle.
 ```
 index.html          faqja e vetme
 css/style.css       stilet dhe paleta (te :root)
-js/main.js          ndërrimi i kateve, pamjet, harta, lightbox
+js/main.js          ndërrimi i kateve, pamjet, harta, lightbox, butoni 3D
+js/house3d-model.js gjeometria e shtëpisë në metra — muret, dritaret, mobiliet
+js/house3d.js       shikuesi 3D (three.js) — ndërton skenën dhe lëvizjen
 assets/plans/*.webp planet e kateve — përdhesa, kati1, kati2
 assets/img/         renderet dhe fasadat
 data.json           të dhënat e nxjerra nga projekti i arkitektit (referencë)
@@ -53,6 +55,46 @@ vend të ≈1,3 MB.
 
 Nëse ndryshon korniza, përditëso `width`/`height` te `<img class="plan-img">`
 në `index.html` dhe `aspect-ratio` te `.plan-sheet` në celular.
+
+## Modeli 3D
+
+Butoni **«Shiko në 3D»** nën planet hap një shikues në tërë ekranin: shtëpia
+e ndërtuar nga e para në three.js, me tri kate, tarracë dhe kulm të sheshtë.
+
+Shtëpia **nuk vjen nga një skedar modeli** — ajo shkruhet si të dhëna te
+`js/house3d-model.js`, në metra, sipas projektit zbatues të NITI Construction
+(skanimet te `src-images/scans/`). Prandaj ndryshimet bëhen duke redaktuar
+numra, jo duke rihapur një program modelimi:
+
+```js
+ext(0, 0.125, 3.40, 0.125, [win(0.50, 2.40, 0.30, 2.40)])
+//  └ muri ballor i majtë, me një dritare 2,40 m të gjerë,
+//    pragu +0,30 m, kryeja +2,40 m
+```
+
+Ndihmësat: `ext`/`int` mure të jashtme e ndarëse, `para` parapete,
+`win`/`door`/`entry`/`slide`/`louvre`/`gap` vrima në mur, `slab` dysheme.
+Koordinatat: **X** 0→6,00 majtas–djathtas, **Z** 0 rruga → 11,80 kopshti,
+**Y** lart nga dyshemeja e përdhesës. Çdo kat ka `base` (0 · 3,00 · 6,00),
+`spawn` (ku nis ecja) dhe listën e mobilieve.
+
+Dy gjëra për t'i mbajtur parasysh:
+
+- **Sipërfaqet zyrtare janë te `data.json` dhe te skedat e faqes**, jo te
+  modeli. Në katin e dytë etiketat e renderit nuk përputhen as me vetë
+  vizatimin e tij, prandaj aty gjeometria ndjek gabaritin e matur
+  6,00 × 11,80 m. Modeli është për të kuptuar hapësirën, jo për të matur.
+- **Fqinjët** (shtëpitë ngjitur) janë të koduar por të fikur —
+  `SITE.neighbours` te `house3d-model.js`.
+
+`three.js` merret nga unpkg dhe **shkarkohet vetëm kur shtypet butoni**
+(`import()` dinamik), që faqja të mos rëndohet për ata që s'e hapin fare.
+Versioni jepet një herë të vetme, te harta e importeve në `<head>` të
+`index.html`.
+
+Lëvizja punon njësoj me mi e me gisht — pa Pointer Lock, sepse ai nuk
+ekziston në celular: tërhiq për të parë rrotull, prek dyshemenë për të
+shkuar atje, `W A S D` për ata që janë para tastierës.
 
 ## Google Analytics
 
